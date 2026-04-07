@@ -23,9 +23,7 @@ function useTrophies(payslips: Payslip[]) {
     const sorted = [...payslips]
       .filter(p => p.gross_salary && p.period_year && p.period_month)
       .sort((a, b) => a.period_year !== b.period_year ? a.period_year - b.period_year : a.period_month - b.period_month);
-
     const consecutive = detectConsecutiveMonths(payslips, 12);
-
     const milestones = TROPHY_DEFS.map(def => {
       const match = sorted.find(p => (p.gross_salary ?? 0) >= def.threshold) ?? null;
       return {
@@ -35,7 +33,6 @@ function useTrophies(payslips: Payslip[]) {
         consecutive: null as typeof consecutive | null,
       };
     });
-
     const streakTrophy = {
       id: "12m", title: "12 Mois", label: "12M", color: "bg-primary/10 text-primary", threshold: 0,
       payslip: null as Payslip | null, unlocked: consecutive.hasConsecutive,
@@ -45,7 +42,6 @@ function useTrophies(payslips: Payslip[]) {
         : "En attente",
       consecutive,
     };
-
     return { milestones: [...milestones, streakTrophy], consecutive };
   }, [payslips]);
 }
@@ -114,7 +110,6 @@ export function TrophyGallery() {
               {selected?.title}
             </DialogTitle>
           </DialogHeader>
-
           {selected?.id === "12m" ? (
             consecutive.hasConsecutive && consecutive.startPayslip && consecutive.endPayslip ? (
               <div className="space-y-4">

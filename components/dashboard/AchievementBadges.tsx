@@ -77,7 +77,6 @@ export function AchievementBadges() {
         <h3 className="text-xl font-semibold">Vos Achievements</h3>
         <Badge variant="outline" className="text-primary border-primary/20">{unlocked}/{achievements.length} débloqués</Badge>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {achievements.map(a => {
           const clickable = a.unlocked && ["best-year","salary-record","progression"].includes(a.id);
@@ -97,7 +96,6 @@ export function AchievementBadges() {
           );
         })}
       </div>
-
       <PodiumModal open={modal === "salary-record"} onOpenChange={v => !v && setModal(null)} title={<><Trophy className="w-5 h-5 text-warning" /> Top 3 Salaires Record</>} rows={salaryRows} />
       <PodiumModal open={modal === "best-year"} onOpenChange={v => !v && setModal(null)} title={<><Target className="w-5 h-5 text-primary" /> Top 3 Années Record</>} rows={yearRows} />
       <PodiumModal open={modal === "progression"} onOpenChange={v => !v && setModal(null)} title={<><TrendingUp className="w-5 h-5 text-success" /> Progression 5 ans</>} rows={progressRows} />

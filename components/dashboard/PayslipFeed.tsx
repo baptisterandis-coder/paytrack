@@ -99,4 +99,28 @@ export function PayslipFeed() {
                     <div>
                       <p className="text-xs text-muted-foreground">Brut</p>
                       <p className="font-bold text-primary">{formatCurrency(p.gross_salary)}</p>
-                    </di
+                    </div>
+                    {p.charges != null && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">Impôt / PAS</p>
+                        <p className="font-bold text-muted-foreground">{formatCurrency(p.charges)}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="pt-3 border-t border-border/50">
+                    <button onClick={() => setEditing(p)} className="text-sm text-primary hover:underline flex items-center gap-1">
+                      <Edit className="w-3.5 h-3.5" /> Saisir les données manuellement
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {editing && <EditPayslipModal payslip={editing} onClose={() => setEditing(null)} />}
+    </div>
+  );
+}
