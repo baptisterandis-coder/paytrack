@@ -66,7 +66,12 @@ export function usePayslips() {
   };
 
   const updatePayslip = async (id: string, updates: Partial<Payslip>) => {
-    await supabase.from("payslips").update({ ...updates, processed: true, processing_status: "completed" }).eq("id", id);
+    await supabase.from("payslips").update({
+      ...updates,
+      net_after_tax: updates.net_salary,
+      processed: true,
+      processing_status: "completed"
+    }).eq("id", id);
     await fetch();
   };
 
