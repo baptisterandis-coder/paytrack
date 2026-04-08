@@ -72,10 +72,6 @@ export function usePayslips() {
 
   useEffect(() => {
     fetch();
-    const channel = supabase.channel("payslips-rt")
-      .on("postgres_changes", { event: "*", schema: "public", table: "payslips" }, fetch)
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
   }, [fetch]);
 
   return { payslips, loading, error, refetch: fetch, uploadPayslip, deletePayslip, downloadPayslip, updatePayslip };
