@@ -25,11 +25,11 @@ const CUMUL_TROPHY_DEFS = [
 ];
 
 const STREAK_TROPHY_DEFS = [
-  { id: "streak-12",  title: "12 Mois",   label: "12M",  color: "bg-primary/10 text-primary",  months: 12  },
-  { id: "streak-24",  title: "24 Mois",   label: "24M",  color: "bg-warning/10 text-warning",  months: 24  },
-  { id: "streak-36",  title: "36 Mois",   label: "36M",  color: "bg-success/10 text-success",  months: 36  },
-  { id: "streak-60",  title: "60 Mois",   label: "60M",  color: "bg-accent/10 text-accent",    months: 60  },
-  { id: "streak-120", title: "120 Mois",  label: "120M", color: "bg-warning/10 text-warning",  months: 120 },
+  { id: "streak-12",  title: "12 Mois",  label: "12M",  color: "bg-primary/10 text-primary", months: 12  },
+  { id: "streak-24",  title: "24 Mois",  label: "24M",  color: "bg-warning/10 text-warning", months: 24  },
+  { id: "streak-36",  title: "36 Mois",  label: "36M",  color: "bg-success/10 text-success", months: 36  },
+  { id: "streak-60",  title: "60 Mois",  label: "60M",  color: "bg-accent/10 text-accent",   months: 60  },
+  { id: "streak-120", title: "120 Mois", label: "120M", color: "bg-warning/10 text-warning", months: 120 },
 ];
 
 type Filter = "all" | "unlocked" | "locked";
@@ -39,7 +39,7 @@ function detectStreak(payslips: Payslip[], minMonths: number) {
     .filter(p => p.period_year && p.period_month)
     .sort((a, b) => a.period_year !== b.period_year ? a.period_year - b.period_year : a.period_month - b.period_month);
 
-  if (sorted.length < minMonths) return { hasStreak: false, streak: sorted.length, startPayslip: null as Payslip | null, endPayslip: null as Payslip | null, payslipsList: [] as Payslip[] };
+  if (sorted.length < 2) return { hasStreak: false, streak: sorted.length, startPayslip: null as Payslip | null, endPayslip: null as Payslip | null, payslipsList: [] as Payslip[] };
 
   let maxStreak = 1, cur = 1, streakStart = 0, maxStart = 0, maxEnd = 0;
   for (let i = 1; i < sorted.length; i++) {
@@ -68,7 +68,6 @@ function useTrophies(payslips: Payslip[]) {
       .filter(p => p.gross_salary && p.period_year && p.period_month)
       .sort((a, b) => a.period_year !== b.period_year ? a.period_year - b.period_year : a.period_month - b.period_month);
 
-    // Trophées mensuel brut
     const monthlyMilestones = MONTHLY_TROPHY_DEFS.map(def => {
       const match = sorted.find(p => (p.gross_salary ?? 0) >= def.threshold) ?? null;
       return {
@@ -81,7 +80,6 @@ function useTrophies(payslips: Payslip[]) {
       };
     });
 
-    // Trophées cumulés
     const cumulMilestones = CUMUL_TROPHY_DEFS.map(def => {
       let cumul = 0;
       let unlockPayslip: Payslip | null = null;
@@ -102,7 +100,6 @@ function useTrophies(payslips: Payslip[]) {
       };
     });
 
-    // Trophées streak
     const streakMilestones = STREAK_TROPHY_DEFS.map(def => {
       const data = detectStreak(payslips, def.months);
       return {
@@ -111,7 +108,7 @@ function useTrophies(payslips: Payslip[]) {
         displayValue: data.hasStreak ? `${data.streak} mois` : null,
         displaySub: data.hasStreak && data.startPayslip && data.endPayslip
           ? `${getMonthShort(data.startPayslip.period_month)} ${data.startPayslip.period_year} – ${getMonthShort(data.endPayslip.period_month)} ${data.endPayslip.period_year}`
-          : `Séquence actuelle : ${data.streak} mois`,
+          : `Meilleure séquence : ${data.streak} mois`,
         streakData: data,
         cumulInfo: null as null,
       };
@@ -178,7 +175,6 @@ export function TrophyGallery() {
         </div>
       </div>
 
-      {/* Salaire mensuel */}
       {getFiltered(monthlyMilestones).length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">💰 Salaire mensuel brut</h4>
@@ -188,7 +184,6 @@ export function TrophyGallery() {
         </div>
       )}
 
-      {/* Cumul carrière */}
       {getFiltered(cumulMilestones).length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">📈 Cumul carrière brut</h4>
@@ -198,7 +193,6 @@ export function TrophyGallery() {
         </div>
       )}
 
-      {/* Régularité */}
       {getFiltered(streakMilestones).length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">⚡ Régularité</h4>
@@ -208,7 +202,6 @@ export function TrophyGallery() {
         </div>
       )}
 
-      {/* Modal */}
       <Dialog open={!!selected} onOpenChange={v => !v && setSelected(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -271,6 +264,7 @@ export function TrophyGallery() {
                 <FileText className="w-4 h-4" /> Télécharger le bulletin
               </Button>
             </div>
+
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Calendar className="w-12 h-12 mx-auto mb-3 opacity-30" />
