@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Euro, FileText, TrendingUp, Users, Upload, Target, LogOut } from "lucide-react";
+import { Euro, FileText, TrendingUp, Users, Upload, Target, LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,27 +14,38 @@ import { Goals } from "@/components/dashboard/Goals";
 import { AchievementBadges } from "@/components/dashboard/AchievementBadges";
 import { TrophyGallery } from "@/components/dashboard/TrophyGallery";
 import { UploadPayslip } from "@/components/dashboard/UploadPayslip";
+import { ProfileModal } from "@/components/dashboard/ProfileModal";
 import { usePayslips } from "@/hooks/usePayslips";
 import { useGoals } from "@/hooks/useGoals";
+import { useProfile } from "@/hooks/useProfile";
 import { formatCurrency, resolveNetSalary, generateMonthlyData } from "@/utils/salary";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [tab, setTab] = useState("dashboard");
+  const [profileOpen, setProfileOpen] = useState(false);
   const { payslips, loading } = usePayslips();
   const { goals } = useGoals();
+  const { profile, getAge } = useProfile();
   const currentYear = new Date().getFullYear();
+  const age = getAge();
 
   const stats = useMemo(() => {
     const cy = payslips.filter(p => p.period_year === currentYear);
     const py = payslips.filter(p => p.period_year === currentYear - 1);
     const totalNet = cy.reduce((s, p) => s + resolveNetSalary(p), 0);
     const totalNetN1 = py.reduce((s, p) => s + resolveNetSalary(p), 0);
+    const totalGross = cy.reduce((s, p) => s + (p.gross_salary ?? 0), 0);
+    const totalGrossN1 = py.reduce((s, p) => s + (p.gross_salary ?? 0), 0);
+    const totalTax = cy.reduce((s, p) => s + (p.tax_amount ?? p.charges ?? 0), 0);
+    const totalTaxN1 = py.reduce((s, p) => s + (p.tax_amount ?? p.charges ?? 0), 0);
     return {
       totalNet, totalNetN1,
       netChange: totalNetN1 > 0 ? ((totalNet - totalNetN1) / totalNetN1) * 100 : 0,
-      totalGross: cy.reduce((s, p) => s + (p.gross_salary ?? 0), 0),
-      totalTax: cy.reduce((s, p) => s + (p.tax_amount ?? p.charges ?? 0), 0),
+      totalGross, totalGrossN1,
+      grossChange: totalGrossN1 > 0 ? ((totalGross - totalGrossN1) / totalGrossN1) * 100 : 0,
+      totalTax, totalTaxN1,
+      taxChange: totalTaxN1 > 0 ? ((totalTax - totalTaxN1) / totalTaxN1) * 100 : 0,
       monthlyData: generateMonthlyData(payslips),
     };
   }, [payslips, currentYear]);
@@ -50,14 +61,40 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 sm:px-6 py-8 max-w-7xl">
+
+        {/* Header */}
         <header className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
               PayTrack
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">Tableau de bord {currentYear}</p>
+            <div className="flex items-center gap-3 mt-1 flex-wrap">
+              <p className="text-muted-foreground text-sm">Tableau de bord {currentYear}</p>
+              {profile?.full_name && (
+                <span className="text-sm text-foreground font-medium">· {profile.full_name}</span>
+              )}
+              {age !== null && (
+                <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+                  {age} ans
+                </span>
+              )}
+              {profile?.job_title && (
+                <span className="text-xs bg-muted/30 text-muted-foreground px-2 py-0.5 rounded-full">
+                  {profile.job_title}
+                </span>
+              )}
+              {profile?.contract_type && (
+                <span className="text-xs bg-muted/30 text-muted-foreground px-2 py-0.5 rounded-full">
+                  {profile.contract_type}
+                </span>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setProfileOpen(true)}>
+              <User className="w-4 h-4" />
+              <span className="hidden sm:inline">Profil</span>
+            </Button>
             <UploadPayslip />
             <Button variant="outline" size="sm" onClick={signOut}>
               <LogOut className="w-4 h-4" />
@@ -80,12 +117,40 @@ export default function DashboardPage() {
               <StatCard
                 title={`Cumul net ${currentYear}`}
                 value={loading ? "…" : formatCurrency(stats.totalNet)}
-                change={!loading && stats.totalNetN1 > 0 ? { value: `${stats.netChange > 0 ? "+" : ""}${stats.netChange.toFixed(1)}%`, isPositive: stats.netChange >= 0 } : undefined}
-                icon={<Euro className="w-6 h-6" />} gradient="success"
+                change={!loading && stats.totalNetN1 > 0 ? {
+                  value: `${stats.netChange > 0 ? "+" : ""}${stats.netChange.toFixed(1)}%`,
+                  isPositive: stats.netChange >= 0
+                } : undefined}
+                icon={<Euro className="w-6 h-6" />}
+                gradient="success"
               />
-              <StatCard title={`Cumul brut ${currentYear}`} value={loading ? "…" : formatCurrency(stats.totalGross)} icon={<TrendingUp className="w-6 h-6" />} gradient="primary" />
-              <StatCard title={`Impôt ${currentYear}`} value={loading ? "…" : formatCurrency(stats.totalTax)} icon={<Users className="w-6 h-6" />} gradient="warning" />
-              <StatCard title="Bulletins" value={loading ? "…" : payslips.length.toString()} icon={<FileText className="w-6 h-6" />} gradient="accent" onClick={() => setTab("payslips")} />
+              <StatCard
+                title={`Cumul brut ${currentYear}`}
+                value={loading ? "…" : formatCurrency(stats.totalGross)}
+                change={!loading && stats.totalGrossN1 > 0 ? {
+                  value: `${stats.grossChange > 0 ? "+" : ""}${stats.grossChange.toFixed(1)}%`,
+                  isPositive: stats.grossChange >= 0
+                } : undefined}
+                icon={<TrendingUp className="w-6 h-6" />}
+                gradient="primary"
+              />
+              <StatCard
+                title={`Impôt ${currentYear}`}
+                value={loading ? "…" : formatCurrency(stats.totalTax)}
+                change={!loading && stats.totalTaxN1 > 0 ? {
+                  value: `${stats.taxChange > 0 ? "+" : ""}${stats.taxChange.toFixed(1)}%`,
+                  isPositive: stats.taxChange <= 0
+                } : undefined}
+                icon={<Users className="w-6 h-6" />}
+                gradient="warning"
+              />
+              <StatCard
+                title="Bulletins"
+                value={loading ? "…" : payslips.length.toString()}
+                icon={<FileText className="w-6 h-6" />}
+                gradient="accent"
+                onClick={() => setTab("payslips")}
+              />
             </div>
 
             <SalaryChart data={stats.monthlyData} />
@@ -93,21 +158,24 @@ export default function DashboardPage() {
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Actions Rapides</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button onClick={() => setTab("payslips")} className="flex items-center gap-3 p-4 border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors text-left">
+                <button onClick={() => setTab("payslips")}
+                  className="flex items-center gap-3 p-4 border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors text-left">
                   <Upload className="w-5 h-5 text-primary flex-shrink-0" />
                   <div>
                     <p className="font-medium">Tous les bulletins</p>
                     <p className="text-sm text-muted-foreground">{payslips.length} enregistré{payslips.length > 1 ? "s" : ""}</p>
                   </div>
                 </button>
-                <button onClick={() => setTab("achievements")} className="flex items-center gap-3 p-4 border border-success/20 rounded-xl hover:bg-success/5 transition-colors text-left">
+                <button onClick={() => setTab("achievements")}
+                  className="flex items-center gap-3 p-4 border border-success/20 rounded-xl hover:bg-success/5 transition-colors text-left">
                   <TrendingUp className="w-5 h-5 text-success flex-shrink-0" />
                   <div>
                     <p className="font-medium">Mes Achievements</p>
                     <p className="text-sm text-muted-foreground">Voir mes badges</p>
                   </div>
                 </button>
-                <button onClick={() => setTab("goals")} className="flex flex-col p-4 border border-warning/20 rounded-xl hover:bg-warning/5 transition-colors text-left">
+                <button onClick={() => setTab("goals")}
+                  className="flex flex-col p-4 border border-warning/20 rounded-xl hover:bg-warning/5 transition-colors text-left">
                   <div className="flex items-center gap-3 mb-3">
                     <Target className="w-5 h-5 text-warning flex-shrink-0" />
                     <div>
@@ -133,6 +201,8 @@ export default function DashboardPage() {
           <TabsContent value="trophies"><TrophyGallery /></TabsContent>
         </Tabs>
       </div>
+
+      <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
     </div>
   );
 }
