@@ -1,11 +1,9 @@
-<StatCard
-  title={`Impôt ${currentYear}`}
-  value={loading ? "…" : formatCurrency(stats.totalTax)}
-  change={!loading && stats.totalTaxN1 > 0 ? {
-    value: `${stats.taxChange > 0 ? "+" : ""}${stats.taxChange.toFixed(1)}%`,
-    isPositive: true,
-    neutral: true
-  } : undefined}
-  icon={<Users className="w-6 h-6" />}
-  gradient="warning"
-/>
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) redirect("/dashboard");
+  else redirect("/auth");
+}
