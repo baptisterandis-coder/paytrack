@@ -1,11 +1,11 @@
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
   title: string;
   value: string;
-  change?: { value: string; isPositive: boolean };
+  change?: { value: string; isPositive: boolean; neutral?: boolean };
   icon: React.ReactNode;
   gradient?: "primary" | "success" | "warning" | "accent";
   onClick?: () => void;
@@ -29,8 +29,18 @@ export function StatCard({ title, value, change, icon, gradient = "primary", onC
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
           <p className="text-3xl font-bold text-foreground">{value}</p>
           {change && (
-            <div className={cn("flex items-center gap-1 text-sm", change.isPositive ? "text-success" : "text-danger")}>
-              {change.isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+            <div className={cn(
+              "flex items-center gap-1 text-sm",
+              change.neutral
+                ? "text-muted-foreground"
+                : change.isPositive ? "text-success" : "text-danger"
+            )}>
+              {change.neutral
+                ? <Minus className="w-4 h-4" />
+                : change.isPositive
+                  ? <TrendingUp className="w-4 h-4" />
+                  : <TrendingDown className="w-4 h-4" />
+              }
               <span>{change.value}</span>
             </div>
           )}
