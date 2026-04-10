@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Euro, FileText, TrendingUp, Users, Upload, Target, LogOut, User } from "lucide-react";
+import { Euro, FileText, TrendingUp, Users, Upload, Target, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,6 +29,10 @@ export default function DashboardPage() {
   const { profile, getAge } = useProfile();
   const currentYear = new Date().getFullYear();
   const age = getAge();
+
+  const initials = profile?.full_name
+    ? profile.full_name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
 
   const stats = useMemo(() => {
     const cy = payslips.filter(p => p.period_year === currentYear);
@@ -68,34 +72,35 @@ export default function DashboardPage() {
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
               PayTrack
             </h1>
-            <div className="flex items-center gap-3 mt-1 flex-wrap">
-              <p className="text-muted-foreground text-sm">Tableau de bord {currentYear}</p>
-              {profile?.full_name && (
-                <span className="text-sm text-foreground font-medium">· {profile.full_name}</span>
-              )}
-              {age !== null && (
-                <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
-                  {age} ans
-                </span>
-              )}
-              {profile?.job_title && (
-                <span className="text-xs bg-muted/30 text-muted-foreground px-2 py-0.5 rounded-full">
-                  {profile.job_title}
-                </span>
-              )}
-              {profile?.contract_type && (
-                <span className="text-xs bg-muted/30 text-muted-foreground px-2 py-0.5 rounded-full">
-                  {profile.contract_type}
-                </span>
-              )}
-            </div>
+            <p className="text-muted-foreground text-sm mt-1">Tableau de bord {currentYear}</p>
           </div>
+
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setProfileOpen(true)}>
-              <User className="w-4 h-4" />
-              <span className="hidden sm:inline">Profil</span>
-            </Button>
+            {/* Bouton Profil avec avatar */}
+            <button
+              onClick={() => setProfileOpen(true)}
+              className="flex items-center gap-3 px-3 py-2 rounded-xl border border-border/50 hover:bg-muted/30 transition-colors"
+            >
+              {/* Avatar initiales */}
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-semibold text-primary flex-shrink-0">
+                {initials}
+              </div>
+              {/* Infos profil */}
+              <div className="text-left hidden sm:block">
+                <div className="text-sm font-medium text-foreground leading-tight">
+                  {profile?.full_name ? profile.full_name.split(" ")[0] : "Mon profil"}
+                  {age !== null && <span className="text-muted-foreground font-normal"> · {age} ans</span>}
+                </div>
+                {(profile?.job_title || profile?.contract_type) && (
+                  <div className="text-xs text-muted-foreground leading-tight">
+                    {[profile.job_title, profile.contract_type].filter(Boolean).join(" · ")}
+                  </div>
+                )}
+              </div>
+            </button>
+
             <UploadPayslip />
+
             <Button variant="outline" size="sm" onClick={signOut}>
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Déconnexion</span>
