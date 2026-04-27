@@ -36,7 +36,15 @@ export default function DashboardPage() {
 
   const stats = useMemo(() => {
     const cy = payslips.filter(p => p.period_year === currentYear);
-    const py = payslips.filter(p => p.period_year === currentYear - 1);
+
+    // Récupère uniquement les mois présents en année courante
+    const currentMonths = new Set(cy.map(p => p.period_month));
+
+    // Filtre N-1 sur les mêmes mois seulement
+    const py = payslips.filter(p =>
+      p.period_year === currentYear - 1 && currentMonths.has(p.period_month)
+    );
+
     const totalNet = cy.reduce((s, p) => s + resolveNetSalary(p), 0);
     const totalNetN1 = py.reduce((s, p) => s + resolveNetSalary(p), 0);
     const totalGross = cy.reduce((s, p) => s + (p.gross_salary ?? 0), 0);
@@ -76,16 +84,13 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Bouton Profil avec avatar */}
             <button
               onClick={() => setProfileOpen(true)}
               className="flex items-center gap-3 px-3 py-2 rounded-xl border border-border/50 hover:bg-muted/30 transition-colors"
             >
-              {/* Avatar initiales */}
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-semibold text-primary flex-shrink-0">
                 {initials}
               </div>
-              {/* Infos profil */}
               <div className="text-left hidden sm:block">
                 <div className="text-sm font-medium text-foreground leading-tight">
                   {profile?.full_name ? profile.full_name.split(" ")[0] : "Mon profil"}
