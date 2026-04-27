@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trophy, Target, TrendingUp } from "lucide-react";
+import { Trophy, Target, TrendingUp, Building2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PodiumModal } from "@/components/ui/PodiumModal";
 import { usePayslips } from "@/hooks/usePayslips";
-import { ACHIEVEMENT_DEFS, getTopNetSalaries, getTopYears, getLast5YearsProgression, formatCurrency, formatPeriod } from "@/utils/salary";
+import { ACHIEVEMENT_DEFS, getTopNetSalaries, getTopYears, getLast5YearsProgression, getTopCompanies, formatCurrency, formatPeriod } from "@/utils/salary";
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   "best-year": <Target className="w-6 h-6" />,
@@ -15,6 +15,12 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   "prime-hunter": <span className="text-xl">💰</span>,
   "milestone-50k": <span className="text-xl">🌟</span>,
   "streak-master": <span className="text-xl">⚡</span>,
+  "premier-pas": <span className="text-xl">🐣</span>,
+  "turbo-boost": <span className="text-xl">🚀</span>,
+  "globe-trotter": <span className="text-xl">✈️</span>,
+  "archiviste": <span className="text-xl">🗂️</span>,
+  "fidelite": <span className="text-xl">🏙️</span>,
+  "top-entreprises": <Building2 className="w-6 h-6" />,
 };
 
 const COLOR_MAP: Record<string, string> = {
@@ -24,11 +30,17 @@ const COLOR_MAP: Record<string, string> = {
   "prime-hunter": "bg-primary/10 text-primary",
   "milestone-50k": "bg-muted/30 text-muted-foreground",
   "streak-master": "bg-muted/30 text-muted-foreground",
+  "premier-pas": "bg-success/10 text-success",
+  "turbo-boost": "bg-warning/10 text-warning",
+  "globe-trotter": "bg-primary/10 text-primary",
+  "archiviste": "bg-muted/30 text-muted-foreground",
+  "fidelite": "bg-primary/10 text-primary",
+  "top-entreprises": "bg-success/10 text-success",
 };
 
 export function AchievementBadges() {
   const { payslips } = usePayslips();
-  const [modal, setModal] = useState<"salary-record" | "best-year" | "progression" | null>(null);
+  const [modal, setModal] = useState<"salary-record" | "best-year" | "progression" | "top-entreprises" | null>(null);
 
   const achievements = useMemo(() => ACHIEVEMENT_DEFS.map(d => ({ ...d, unlocked: d.check(payslips) })), [payslips]);
   const unlocked = achievements.filter(a => a.unlocked).length;
@@ -65,10 +77,20 @@ export function AchievementBadges() {
     ],
   })), [payslips]);
 
+  const companyRows = useMemo(() => getTopCompanies(payslips).map(c => ({
+    key: c.company,
+    cells: [
+      { label: "Entreprise", value: c.company, accent: "text-primary" },
+      { label: "Ancienneté", value: c.years > 0 ? `${c.years} an${c.years > 1 ? "s" : ""} ${c.remainingMonths > 0 ? `${c.remainingMonths} mois` : ""}`.trim() : `${c.months} mois`, accent: "text-success" },
+      { label: "Bulletins", value: `${c.months} bulletin${c.months > 1 ? "s" : ""}` },
+    ],
+  })), [payslips]);
+
   const handleClick = (id: string) => {
     if (id === "best-year") setModal("best-year");
     else if (id === "salary-record") setModal("salary-record");
     else if (id === "progression") setModal("progression");
+    else if (id === "top-entreprises") setModal("top-entreprises");
   };
 
   return (
@@ -79,7 +101,7 @@ export function AchievementBadges() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {achievements.map(a => {
-          const clickable = a.unlocked && ["best-year","salary-record","progression"].includes(a.id);
+          const clickable = a.unlocked && ["best-year","salary-record","progression","top-entreprises"].includes(a.id);
           return (
             <Card key={a.id}
               className={`p-4 border-border/50 transition-all ${a.unlocked ? `${clickable ? "cursor-pointer hover:shadow-glow" : ""}` : "opacity-50"}`}
@@ -99,6 +121,7 @@ export function AchievementBadges() {
       <PodiumModal open={modal === "salary-record"} onOpenChange={v => !v && setModal(null)} title={<><Trophy className="w-5 h-5 text-warning" /> Top 3 Salaires Record</>} rows={salaryRows} />
       <PodiumModal open={modal === "best-year"} onOpenChange={v => !v && setModal(null)} title={<><Target className="w-5 h-5 text-primary" /> Top 3 Années Record</>} rows={yearRows} />
       <PodiumModal open={modal === "progression"} onOpenChange={v => !v && setModal(null)} title={<><TrendingUp className="w-5 h-5 text-success" /> Progression 5 ans</>} rows={progressRows} />
+      <PodiumModal open={modal === "top-entreprises"} onOpenChange={v => !v && setModal(null)} title={<><Building2 className="w-5 h-5 text-success" /> Top 3 Entreprises</>} rows={companyRows} />
     </div>
   );
 }
