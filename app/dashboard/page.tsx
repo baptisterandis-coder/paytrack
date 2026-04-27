@@ -37,10 +37,8 @@ export default function DashboardPage() {
   const stats = useMemo(() => {
     const cy = payslips.filter(p => p.period_year === currentYear);
 
-    // Récupère uniquement les mois présents en année courante
     const currentMonths = new Set(cy.map(p => p.period_month));
 
-    // Filtre N-1 sur les mêmes mois seulement
     const py = payslips.filter(p =>
       p.period_year === currentYear - 1 && currentMonths.has(p.period_month)
     );
@@ -118,7 +116,7 @@ export default function DashboardPage() {
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="payslips">Bulletins</TabsTrigger>
             <TabsTrigger value="goals">Objectifs</TabsTrigger>
-            <TabsTrigger value="achievements">Badges</TabsTrigger>
+            <TabsTrigger value="achievements">Achievements</TabsTrigger>
             <TabsTrigger value="trophies">Trophées</TabsTrigger>
           </TabsList>
 
