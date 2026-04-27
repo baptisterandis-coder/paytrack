@@ -51,21 +51,12 @@ export function Goals() {
   const totalGross = currentYearPayslips.reduce((s, p) => s + (p.gross_salary ?? 0), 0);
   const bulletinCount = currentYearPayslips.length;
 
-  // Moyenne mensuelle réelle basée sur les bulletins uploadés
   const avgMonthlyGross = bulletinCount > 0 ? totalGross / bulletinCount : 0;
-
-  // Progression annuelle globale
   const overallProgress = annualGoal ? Math.min((totalGross / annualGoal.target_amount) * 100, 100) : 0;
-
-  // Avance / retard : on compare avec ce qu'on devrait avoir à cette date
   const expectedSoFar = annualGoal ? (annualGoal.target_amount / 12) * currentMonth : 0;
   const delta = annualGoal ? totalGross - expectedSoFar : 0;
   const isAhead = delta >= 0;
 
-  // Projection annuelle
-  const projection = bulletinCount > 0 ? (totalGross / bulletinCount) * 12 : 0;
-
-  // Progression objectif mensuel moyen
   const monthlyProgress = monthlyGoal && avgMonthlyGross > 0
     ? Math.min((avgMonthlyGross / monthlyGoal.target_amount) * 100, 100)
     : 0;
@@ -108,7 +99,6 @@ export function Goals() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* Objectif Annuel */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -127,10 +117,6 @@ export function Goals() {
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Actuel ({bulletinCount} bulletins)</span>
                   <span className="font-semibold">{formatCurrency(totalGross)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Projection annuelle</span>
-                  <span className="font-semibold">{bulletinCount > 0 ? formatCurrency(projection) : "—"}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Avance / Retard</span>
@@ -160,7 +146,6 @@ export function Goals() {
           </CardContent>
         </Card>
 
-        {/* Objectif Mensuel Moyen */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
