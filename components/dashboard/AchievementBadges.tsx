@@ -12,14 +12,6 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   "best-year": <Target className="w-6 h-6" />,
   "salary-record": <Trophy className="w-6 h-6" />,
   "progression": <TrendingUp className="w-6 h-6" />,
-  "prime-hunter": <span className="text-xl">💰</span>,
-  "milestone-50k": <span className="text-xl">🌟</span>,
-  "streak-master": <span className="text-xl">⚡</span>,
-  "premier-pas": <span className="text-xl">🐣</span>,
-  "turbo-boost": <span className="text-xl">🚀</span>,
-  "globe-trotter": <span className="text-xl">✈️</span>,
-  "archiviste": <span className="text-xl">🗂️</span>,
-  "fidelite": <span className="text-xl">🏙️</span>,
   "top-entreprises": <Building2 className="w-6 h-6" />,
 };
 
@@ -27,14 +19,6 @@ const COLOR_MAP: Record<string, string> = {
   "best-year": "bg-primary/10 text-primary",
   "salary-record": "bg-warning/10 text-warning",
   "progression": "bg-success/10 text-success",
-  "prime-hunter": "bg-primary/10 text-primary",
-  "milestone-50k": "bg-muted/30 text-muted-foreground",
-  "streak-master": "bg-muted/30 text-muted-foreground",
-  "premier-pas": "bg-success/10 text-success",
-  "turbo-boost": "bg-warning/10 text-warning",
-  "globe-trotter": "bg-primary/10 text-primary",
-  "archiviste": "bg-muted/30 text-muted-foreground",
-  "fidelite": "bg-primary/10 text-primary",
   "top-entreprises": "bg-success/10 text-success",
 };
 
@@ -81,7 +65,7 @@ export function AchievementBadges() {
     key: c.company,
     cells: [
       { label: "Entreprise", value: c.company, accent: "text-primary" },
-      { label: "Ancienneté", value: c.years > 0 ? `${c.years} an${c.years > 1 ? "s" : ""} ${c.remainingMonths > 0 ? `${c.remainingMonths} mois` : ""}`.trim() : `${c.months} mois`, accent: "text-success" },
+      { label: "Ancienneté", value: c.years > 0 ? `${c.years} an${c.years > 1 ? "s" : ""}${c.remainingMonths > 0 ? ` ${c.remainingMonths} mois` : ""}` : `${c.months} mois`, accent: "text-success" },
       { label: "Bulletins", value: `${c.months} bulletin${c.months > 1 ? "s" : ""}` },
     ],
   })), [payslips]);

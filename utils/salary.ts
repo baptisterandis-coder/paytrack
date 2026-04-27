@@ -1,5 +1,3 @@
-"use client";
-
 export interface Payslip {
   id: string;
   user_id: string;
@@ -175,16 +173,5 @@ export const ACHIEVEMENT_DEFS: AchievementDef[] = [
   { id: "best-year", title: "Année Record 📊", description: "Vos meilleures années de revenus", check: ps => Object.keys(buildYearlyTotals(ps)).length >= 1 },
   { id: "salary-record", title: "Salaire Record 🏆", description: "Votre meilleur salaire net", check: ps => ps.some(p => resolveNetSalary(p) > 0) },
   { id: "progression", title: "En Progression 📈", description: "Évolution des revenus sur 5 ans", check: ps => Object.keys(buildYearlyTotals(ps)).length >= 2 },
-  { id: "prime-hunter", title: "Prime Hunter 💰", description: "Plus de 1 000 € de primes cette année", check: ps => ps.filter(p => p.period_year === new Date().getFullYear()).reduce((s, p) => s + (p.charges ?? 0), 0) > 1000 },
-  { id: "milestone-50k", title: "Milestone 50K 🌟", description: "Atteindre 50 000 € brut annuel", check: ps => Object.values(buildYearlyTotals(ps)).some(t => t.totalGross >= 50000) },
-  { id: "streak-master", title: "Streak Master ⚡", description: "12 mois de bulletins consécutifs", check: ps => detectConsecutiveMonths(ps, 12).hasConsecutive },
-  { id: "premier-pas", title: "Premier Pas 🐣", description: "Uploader son tout premier bulletin", check: ps => ps.length >= 1 },
-  { id: "turbo-boost", title: "Turbo Boost 🚀", description: "+10% de salaire brut en un an", check: ps => {
-    const years = Object.values(buildYearlyTotals(ps)).sort((a, b) => a.year - b.year);
-    return years.some((y, i) => i > 0 && years[i-1].totalGross > 0 && ((y.totalGross - years[i-1].totalGross) / years[i-1].totalGross) >= 0.10);
-  }},
-  { id: "globe-trotter", title: "Globe Trotter ✈️", description: "Bulletins de 3 employeurs différents", check: ps => new Set(ps.map(p => p.company_name).filter(Boolean)).size >= 3 },
-  { id: "archiviste", title: "Archiviste 🗂️", description: "5 ans d'historique uploadé", check: ps => Object.keys(buildYearlyTotals(ps)).length >= 5 },
-  { id: "fidelite", title: "Fidèle au Poste 🏙️", description: "5 ans chez le même employeur", check: ps => getTopCompanies(ps, 1).some(c => c.months >= 60) },
   { id: "top-entreprises", title: "Mes Entreprises 🏢", description: "Top 3 de vos employeurs par ancienneté", check: ps => getTopCompanies(ps).length >= 1 },
 ];
