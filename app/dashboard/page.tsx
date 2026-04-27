@@ -149,7 +149,7 @@ export default function DashboardPage() {
                 value={loading ? "…" : formatCurrency(stats.totalTax)}
                 change={!loading && stats.totalTaxN1 > 0 ? {
                   value: `${stats.taxChange > 0 ? "+" : ""}${stats.taxChange.toFixed(1)}%`,
-                  isPositive: stats.taxChange <= 0
+                  isPositive: stats.taxChange >= 0
                 } : undefined}
                 icon={<Users className="w-6 h-6" />}
                 gradient="warning"
