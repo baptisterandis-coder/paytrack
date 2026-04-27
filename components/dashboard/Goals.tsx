@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { PodiumModal } from "@/components/ui/PodiumModal";
 import { useGoals } from "@/hooks/useGoals";
 import { usePayslips } from "@/hooks/usePayslips";
-import { getTopGrossSalaries, getTopYears, getBestMonthPayslip, formatCurrency, formatPeriod, getMonthLong, resolveNetSalary } from "@/utils/salary";
+import { getTopGrossSalaries, getTopYears, formatCurrency, formatPeriod, resolveNetSalary } from "@/utils/salary";
 
 function GoalForm({ label, placeholder, value, onChange, onSubmit, onCancel, onDelete, editing, btnClass }: {
   label: string; placeholder: string; value: string; onChange: (v: string) => void;
@@ -45,15 +45,32 @@ export function Goals() {
   const annualGoal = goals.find(g => g.goal_type === "annual_gross");
   const monthlyGoal = goals.find(g => g.goal_type === "monthly_gross");
   const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+
   const currentYearPayslips = payslips.filter(p => p.period_year === currentYear);
   const totalGross = currentYearPayslips.reduce((s, p) => s + (p.gross_salary ?? 0), 0);
-  const n = new Set(currentYearPayslips.map(p => p.period_month)).size;
-  const proportional = annualGoal && n > 0 ? (annualGoal.target_amount / 12) * n : 0;
-  const annualProgress = annualGoal && proportional > 0 ? (totalGross / proportional) * 100 : 0;
-  const overallProgress = annualGoal ? (totalGross / annualGoal.target_amount) * 100 : 0;
-  const bestMonth = getBestMonthPayslip(payslips);
-  const bestMonthGross = bestMonth?.gross_salary ?? 0;
-  const monthlyProgress = monthlyGoal ? Math.min((bestMonthGross / monthlyGoal.target_amount) * 100, 100) : 0;
+  const bulletinCount = currentYearPayslips.length;
+
+  // Moyenne mensuelle réelle basée sur les bulletins uploadés
+  const avgMonthlyGross = bulletinCount > 0 ? totalGross / bulletinCount : 0;
+
+  // Progression annuelle globale
+  const overallProgress = annualGoal ? Math.min((totalGross / annualGoal.target_amount) * 100, 100) : 0;
+
+  // Avance / retard : on compare avec ce qu'on devrait avoir à cette date
+  const expectedSoFar = annualGoal ? (annualGoal.target_amount / 12) * currentMonth : 0;
+  const delta = annualGoal ? totalGross - expectedSoFar : 0;
+  const isAhead = delta >= 0;
+
+  // Projection annuelle
+  const projection = bulletinCount > 0 ? (totalGross / bulletinCount) * 12 : 0;
+
+  // Progression objectif mensuel moyen
+  const monthlyProgress = monthlyGoal && avgMonthlyGross > 0
+    ? Math.min((avgMonthlyGross / monthlyGoal.target_amount) * 100, 100)
+    : 0;
+  const monthlyDelta = monthlyGoal ? avgMonthlyGross - monthlyGoal.target_amount : 0;
+  const isMonthlyAhead = monthlyDelta >= 0;
 
   const topSalaryRows = useMemo(() => getTopGrossSalaries(payslips).map(p => ({
     key: p.id,
@@ -90,6 +107,8 @@ export function Goals() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {/* Objectif Annuel */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -101,19 +120,31 @@ export function Goals() {
           <CardContent>
             {annualGoal && !editingAnnual ? (
               <div className="space-y-3">
-                {[["Objectif annuel", formatCurrency(annualGoal.target_amount)], [`Attendu (${n} mois)`, formatCurrency(proportional)], ["Actuel", formatCurrency(totalGross)], ["Projection annuelle", n > 0 ? formatCurrency((totalGross / n) * 12) : "—"]].map(([l, v]) => (
-                  <div key={l} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{l}</span>
-                    <span className="font-semibold">{v}</span>
-                  </div>
-                ))}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Objectif annuel</span>
+                  <span className="font-semibold">{formatCurrency(annualGoal.target_amount)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Actuel ({bulletinCount} bulletins)</span>
+                  <span className="font-semibold">{formatCurrency(totalGross)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Projection annuelle</span>
+                  <span className="font-semibold">{bulletinCount > 0 ? formatCurrency(projection) : "—"}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Avance / Retard</span>
+                  <span className={`font-semibold ${isAhead ? "text-success" : "text-danger"}`}>
+                    {isAhead ? "+" : ""}{formatCurrency(delta)}
+                  </span>
+                </div>
                 <div className="relative h-8 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-warning transition-all duration-500 flex items-center justify-center" style={{ width: `${Math.min(annualProgress, 100)}%` }}>
-                    {annualProgress > 8 && <span className="text-xs font-bold text-warning-foreground">{annualProgress.toFixed(0)}%</span>}
+                  <div className="h-full bg-warning transition-all duration-500 flex items-center justify-center rounded-full"
+                    style={{ width: `${Math.min(overallProgress, 100)}%` }}>
+                    {overallProgress > 8 && <span className="text-xs font-bold text-warning-foreground">{overallProgress.toFixed(0)}%</span>}
                   </div>
                 </div>
-                <div className="flex justify-between items-center text-xs text-muted-foreground">
-                  <span>Progression globale : <strong className="text-foreground">{overallProgress.toFixed(0)}%</strong></span>
+                <div className="flex justify-end">
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:bg-primary/10"
                     onClick={() => { setAnnualTarget(annualGoal.target_amount.toString()); setEditingAnnual(true); }}>
                     <Pencil className="w-3.5 h-3.5" />
@@ -129,30 +160,35 @@ export function Goals() {
           </CardContent>
         </Card>
 
+        {/* Objectif Mensuel Moyen */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><Target className="w-5 h-5 text-success" /><CardTitle>Objectif Mensuel Brut</CardTitle></div>
+              <div className="flex items-center gap-2"><Target className="w-5 h-5 text-success" /><CardTitle>Objectif Mensuel Moyen</CardTitle></div>
               <Button variant="ghost" size="icon" onClick={() => setModal("top-salaries")} className="text-warning hover:text-warning hover:bg-warning/10"><Trophy className="w-4 h-4" /></Button>
             </div>
-            <CardDescription>Objectif brut mensuel</CardDescription>
+            <CardDescription>Moyenne brute sur les {bulletinCount} bulletins {currentYear}</CardDescription>
           </CardHeader>
           <CardContent>
             {monthlyGoal && !editingMonthly ? (
               <div className="space-y-3">
-                {[["Objectif", formatCurrency(monthlyGoal.target_amount)], ["Meilleur mois", formatCurrency(bestMonthGross)]].map(([l, v]) => (
-                  <div key={l} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{l}</span><span className="font-semibold">{v}</span>
-                  </div>
-                ))}
-                {bestMonth && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Date</span>
-                    <span className="font-medium">{getMonthLong(bestMonth.period_month)} {bestMonth.period_year}</span>
-                  </div>
-                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Objectif mensuel</span>
+                  <span className="font-semibold">{formatCurrency(monthlyGoal.target_amount)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Moyenne actuelle</span>
+                  <span className="font-semibold">{bulletinCount > 0 ? formatCurrency(avgMonthlyGross) : "—"}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Avance / Retard</span>
+                  <span className={`font-semibold ${isMonthlyAhead ? "text-success" : "text-danger"}`}>
+                    {isMonthlyAhead ? "+" : ""}{formatCurrency(monthlyDelta)}
+                  </span>
+                </div>
                 <div className="relative h-8 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-success transition-all duration-500 flex items-center justify-center" style={{ width: `${monthlyProgress}%` }}>
+                  <div className="h-full bg-success transition-all duration-500 flex items-center justify-center rounded-full"
+                    style={{ width: `${monthlyProgress}%` }}>
                     {monthlyProgress > 10 && <span className="text-xs font-bold text-success-foreground">{monthlyProgress.toFixed(0)}%</span>}
                   </div>
                 </div>
@@ -164,7 +200,7 @@ export function Goals() {
                 </div>
               </div>
             ) : (
-              <GoalForm label="Objectif mensuel (€)" placeholder="Ex : 4 500" value={monthlyTarget} onChange={setMonthlyTarget}
+              <GoalForm label="Objectif mensuel moyen (€)" placeholder="Ex : 7 000" value={monthlyTarget} onChange={setMonthlyTarget}
                 onSubmit={handleMonthly} editing={editingMonthly} btnClass="bg-gradient-success shadow-success"
                 onCancel={() => { setMonthlyTarget(""); setEditingMonthly(false); }}
                 onDelete={() => { if (monthlyGoal) { deleteGoal(monthlyGoal.id); setEditingMonthly(false); } }} />
