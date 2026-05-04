@@ -155,9 +155,9 @@ export default function DashboardPage() {
               />
             </div>
 
-            <CareerChart payslips={payslips} birthDate={profile?.birth_date ?? null} />
-
             <SalaryChart data={stats.monthlyData} />
+
+            <CareerChart payslips={payslips} birthDate={profile?.birth_date ?? null} />
 
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Actions Rapides</h3>
