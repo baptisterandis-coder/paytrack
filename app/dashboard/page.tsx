@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { SalaryChart } from "@/components/dashboard/SalaryChart";
+import { CareerChart } from "@/components/dashboard/CareerChart";
 import { PayslipFeed } from "@/components/dashboard/PayslipFeed";
 import { Goals } from "@/components/dashboard/Goals";
 import { AchievementBadges } from "@/components/dashboard/AchievementBadges";
@@ -36,13 +37,10 @@ export default function DashboardPage() {
 
   const stats = useMemo(() => {
     const cy = payslips.filter(p => p.period_year === currentYear);
-
     const currentMonths = new Set(cy.map(p => p.period_month));
-
     const py = payslips.filter(p =>
       p.period_year === currentYear - 1 && currentMonths.has(p.period_month)
     );
-
     const totalNet = cy.reduce((s, p) => s + resolveNetSalary(p), 0);
     const totalNetN1 = py.reduce((s, p) => s + resolveNetSalary(p), 0);
     const totalGross = cy.reduce((s, p) => s + (p.gross_salary ?? 0), 0);
@@ -72,7 +70,6 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 sm:px-6 py-8 max-w-7xl">
 
-        {/* Header */}
         <header className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
@@ -80,7 +77,6 @@ export default function DashboardPage() {
             </h1>
             <p className="text-muted-foreground text-sm mt-1">Tableau de bord {currentYear}</p>
           </div>
-
           <div className="flex items-center gap-2">
             <button
               onClick={() => setProfileOpen(true)}
@@ -101,9 +97,7 @@ export default function DashboardPage() {
                 )}
               </div>
             </button>
-
             <UploadPayslip />
-
             <Button variant="outline" size="sm" onClick={signOut}>
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Déconnexion</span>
@@ -160,6 +154,8 @@ export default function DashboardPage() {
                 onClick={() => setTab("payslips")}
               />
             </div>
+
+            <CareerChart payslips={payslips} birthDate={profile?.birth_date ?? null} />
 
             <SalaryChart data={stats.monthlyData} />
 
