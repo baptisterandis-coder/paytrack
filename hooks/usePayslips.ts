@@ -29,7 +29,7 @@ export function usePayslips() {
     }
   }, []);
 
-  const extractPayslipData = async (filePath: string, fileType: string) => {
+  const extractPayslipData = async (filePath: string, fileType: string, previousPayslip?: Payslip | null) => {
     try {
       const { data } = await supabase.storage.from("payslips").download(filePath);
       if (!data) return null;
@@ -37,15 +37,32 @@ export function usePayslips() {
       const buffer = await data.arrayBuffer();
       const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
       const { data: fnData, error: fnError } = await supabase.functions.invoke("extract-payslip", {
-        body: { pdfBase64: base64 },
+        body: {
+          pdfBase64: base64,
+          previousPayslip: previousPayslip ? {
+            period_month: previousPayslip.period_month,
+            period_year: previousPayslip.period_year,
+            gross_salary: previousPayslip.gross_salary,
+            net_salary: previousPayslip.net_salary,
+            charges: previousPayslip.charges,
+            ai_comment: previousPayslip.ai_comment,
+          } : null,
+        },
       });
       if (fnError) throw fnError;
-      if (fnData?.success) return fnData.data;
+      if (fnData?.success) return { data: fnData.data, ai_comment: fnData.ai_comment };
       return null;
     } catch (e) {
       console.error("Extraction error:", e);
       return null;
     }
+  };
+
+  const getPreviousPayslip = (payslips: Payslip[], month: number, year: number): Payslip | null => {
+    let prevMonth = month - 1;
+    let prevYear = year;
+    if (prevMonth === 0) { prevMonth = 12; prevYear--; }
+    return payslips.find(p => p.period_month === prevMonth && p.period_year === prevYear) ?? null;
   };
 
   const uploadPayslip = async (file: File) => {
@@ -66,8 +83,16 @@ export function usePayslips() {
 
     // Extraction automatique si PDF
     if (file.type === "application/pdf" && inserted) {
-      const extracted = await extractPayslipData(path, file.type);
-      if (extracted) {
+      const { data: allPayslips } = await supabase
+        .from("payslips").select("*").eq("user_id", user.id);
+      const previousPayslip = getPreviousPayslip(
+        allPayslips ?? [],
+        now.getMonth() + 1,
+        now.getFullYear()
+      );
+      const result = await extractPayslipData(path, file.type, previousPayslip);
+      if (result) {
+        const { data: extracted, ai_comment } = result;
         await supabase.from("payslips").update({
           period_month: extracted.period_month ?? now.getMonth() + 1,
           period_year: extracted.period_year ?? now.getFullYear(),
@@ -76,6 +101,7 @@ export function usePayslips() {
           net_salary: extracted.net_salary ?? null,
           net_after_tax: extracted.net_salary ?? null,
           charges: extracted.charges ?? null,
+          ai_comment: ai_comment ?? null,
           processed: true,
           processing_status: "completed",
         }).eq("id", inserted.id);
@@ -118,4 +144,4 @@ export function usePayslips() {
   }, [fetch]);
 
   return { payslips, loading, error, refetch: fetch, uploadPayslip, deletePayslip, downloadPayslip, updatePayslip };
-}
+} 
