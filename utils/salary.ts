@@ -125,7 +125,7 @@ export function getLast5YearsProgression(payslips: Payslip[]): YearlyTotalWithGr
   const sorted = Object.values(buildYearlyTotals(payslips)).sort((a, b) => b.year - a.year).slice(0, 5).sort((a, b) => a.year - b.year);
   return sorted.map((y, i, arr) => ({
     ...y,
-    growthRate: i > 0 && arr[i-1].totalNet > 0 ? ((y.totalNet - arr[i-1].totalNet) / arr[i-1].totalNet) * 100 : null,
+    growthRate: i > 0 && arr[i-1].totalGross > 0 ? ((y.totalGross - arr[i-1].totalGross) / arr[i-1].totalGross) * 100 : null,
   }));
 }
 
