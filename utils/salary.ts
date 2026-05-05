@@ -17,6 +17,7 @@ export interface Payslip {
   processed: boolean;
   processing_status: string;
   processing_error?: string | null;
+  ai_comment?: string | null;
   created_at: string;
   updated_at: string;
 }
