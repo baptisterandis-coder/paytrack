@@ -144,4 +144,4 @@ export function usePayslips() {
   }, [fetch]);
 
   return { payslips, loading, error, refetch: fetch, uploadPayslip, deletePayslip, downloadPayslip, updatePayslip };
-} 
+}
