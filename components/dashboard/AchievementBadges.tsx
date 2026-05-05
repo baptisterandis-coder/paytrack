@@ -53,7 +53,7 @@ export function AchievementBadges() {
     key: String(y.year),
     cells: [
       { label: "Année", value: y.year, accent: "text-primary" },
-      { label: "Total Net", value: formatCurrency(y.totalNet), accent: "text-success" },
+      { label: "Total Brut", value: formatCurrency(y.totalGross), accent: "text-primary" },
       { label: "Évolution", value: y.growthRate != null
         ? <span className={y.growthRate >= 0 ? "text-success" : "text-danger"}>{y.growthRate > 0 ? "+" : ""}{y.growthRate.toFixed(1)}%</span>
         : <span className="text-muted-foreground text-xs">1re année</span> },
