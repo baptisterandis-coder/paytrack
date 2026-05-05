@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { FileText, Edit, Trash2, Download, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { FileText, Edit, Trash2, Download, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,26 @@ const StatusBadge = ({ status }: { status: string }) => {
   if (status === "error") return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />Erreur</Badge>;
   return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />En attente</Badge>;
 };
+
+function AiComment({ comment }: { comment: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="pt-3 border-t border-border/50">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 text-sm text-primary hover:underline"
+      >
+        💬 Analyse IA
+        {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+      </button>
+      {open && (
+        <div className="mt-3 p-4 bg-muted/20 rounded-xl text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+          {comment}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function PayslipFeed() {
   const { payslips, loading, deletePayslip, downloadPayslip } = usePayslips();
@@ -114,6 +134,7 @@ export function PayslipFeed() {
                     </button>
                   </div>
                 )}
+                {p.ai_comment && <AiComment comment={p.ai_comment} />}
               </div>
             </div>
           </Card>
