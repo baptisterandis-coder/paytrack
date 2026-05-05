@@ -18,18 +18,28 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 function AiComment({ comment }: { comment: string }) {
   const [open, setOpen] = useState(false);
+
+  const renderMarkdown = (text: string) => {
+    return text
+      .split('\n')
+      .map((line, i) => {
+        const formatted = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        return <p key={i} className="mb-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
+      });
+  };
+
   return (
     <div className="pt-3 border-t border-border/50">
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 text-sm text-primary hover:underline"
       >
-        💬 Analyse IA
+        💡 Insights
         {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
       </button>
       {open && (
-        <div className="mt-3 p-4 bg-muted/20 rounded-xl text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-          {comment}
+        <div className="mt-3 p-4 bg-muted/20 rounded-xl text-sm text-foreground leading-relaxed">
+          {renderMarkdown(comment)}
         </div>
       )}
     </div>
