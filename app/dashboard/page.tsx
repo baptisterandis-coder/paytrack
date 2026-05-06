@@ -19,7 +19,7 @@ import { ProfileModal } from "@/components/dashboard/ProfileModal";
 import { usePayslips } from "@/hooks/usePayslips";
 import { useGoals } from "@/hooks/useGoals";
 import { useProfile } from "@/hooks/useProfile";
-import { formatCurrency, resolveNetSalary, generateMonthlyData } from "@/utils/salary";
+import { formatCurrency, resolveNetSalary, generateMonthlyData, buildYearlyTotals } from "@/utils/salary";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -57,6 +57,29 @@ export default function DashboardPage() {
       monthlyData: generateMonthlyData(payslips),
     };
   }, [payslips, currentYear]);
+
+  // CAGR
+  const yearlyTotals = useMemo(() => {
+    const totals = buildYearlyTotals(payslips);
+    return Object.values(totals).sort((a, b) => a.year - b.year);
+  }, [payslips]);
+
+  const availableYears = useMemo(() => yearlyTotals.map(y => y.year), [yearlyTotals]);
+
+  const [cagrFromYear, setCagrFromYear] = useState<number | null>(null);
+  const [cagrToYear, setCagrToYear] = useState<number | null>(null);
+
+  const fromYear = cagrFromYear ?? availableYears[0] ?? null;
+  const toYear = cagrToYear ?? availableYears[availableYears.length - 1] ?? null;
+
+  const cagr = useMemo(() => {
+    if (!fromYear || !toYear || fromYear >= toYear) return null;
+    const from = yearlyTotals.find(y => y.year === fromYear);
+    const to = yearlyTotals.find(y => y.year === toYear);
+    if (!from || !to || from.totalGross === 0) return null;
+    const years = toYear - fromYear;
+    return (Math.pow(to.totalGross / from.totalGross, 1 / years) - 1) * 100;
+  }, [yearlyTotals, fromYear, toYear]);
 
   const annualGoal = goals.find(g => g.goal_type === "annual_gross");
   const progress = annualGoal ? (stats.totalGross / annualGoal.target_amount) * 100 : 0;
@@ -154,6 +177,58 @@ export default function DashboardPage() {
                 onClick={() => setTab("payslips")}
               />
             </div>
+
+            {/* Bloc CAGR */}
+            {availableYears.length >= 2 && (
+              <Card className="p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      📈 CAGR — Croissance annuelle moyenne
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      Taux de croissance de ton salaire brut sur la période
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">De</span>
+                      <select
+                        value={fromYear ?? ""}
+                        onChange={e => setCagrFromYear(Number(e.target.value))}
+                        className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
+                      >
+                        {availableYears.slice(0, -1).map(y => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">À</span>
+                      <select
+                        value={toYear ?? ""}
+                        onChange={e => setCagrToYear(Number(e.target.value))}
+                        className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
+                      >
+                        {availableYears.slice(1).map(y => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                    </div>
+                    {cagr !== null && (
+                      <div className={`px-4 py-2 rounded-xl font-bold text-lg ${cagr >= 0 ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
+                        {cagr > 0 ? "+" : ""}{cagr.toFixed(1)}%/an
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {cagr !== null && fromYear && toYear && (
+                  <p className="text-xs text-muted-foreground mt-3">
+                    De <strong className="text-foreground">{fromYear}</strong> à <strong className="text-foreground">{toYear}</strong> — {toYear - fromYear} an{toYear - fromYear > 1 ? "s" : ""} · Brut {yearlyTotals.find(y => y.year === fromYear) ? formatCurrency(yearlyTotals.find(y => y.year === fromYear)!.totalGross) : ""} → {yearlyTotals.find(y => y.year === toYear) ? formatCurrency(yearlyTotals.find(y => y.year === toYear)!.totalGross) : ""}
+                  </p>
+                )}
+              </Card>
+            )}
 
             <SalaryChart data={stats.monthlyData} />
 
