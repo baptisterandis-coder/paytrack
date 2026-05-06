@@ -30,7 +30,7 @@ function filterRelevant(items: any[], source: string): NewsItem[] {
     .map(item => ({
       date: new Date(item.pubDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }),
       title: item.title.replace(/<[^>]*>/g, "").trim(),
-      summary: item.description?.replace(/<[^>]*>/g, "").trim().slice(0, 150) + "..." ?? "",
+      summary: (item.description ?? "").replace(/<[^>]*>/g, "").trim().slice(0, 150) + "...",
       url: item.link,
       source,
     }));
@@ -44,7 +44,6 @@ export function NewsFeed() {
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const supabase = createClient();
 
-  // Charger les news RSS
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -70,12 +69,10 @@ export function NewsFeed() {
     fetchNews();
   }, []);
 
-  // Charger ou générer la synthèse du jour
   useEffect(() => {
     const fetchOrGenerateSummary = async () => {
       const today = new Date().toISOString().split("T")[0];
 
-      // Vérifier si synthèse existe déjà aujourd'hui
       const { data: existing } = await supabase
         .from("daily_news")
         .select("summary")
@@ -87,7 +84,6 @@ export function NewsFeed() {
         return;
       }
 
-      // Pas de synthèse → on génère
       if (news.length === 0) return;
       setLoadingSummary(true);
 
@@ -118,7 +114,6 @@ export function NewsFeed() {
         const summary = data.content?.[0]?.text ?? "";
 
         if (summary) {
-          // Stocker dans Supabase
           await supabase.from("daily_news").upsert({ date: today, summary });
           setDailySummary(summary);
         }
@@ -134,7 +129,6 @@ export function NewsFeed() {
 
   return (
     <div className="space-y-4">
-      {/* Synthèse du jour */}
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
           <span className="text-base">📰</span>
@@ -154,7 +148,6 @@ export function NewsFeed() {
         )}
       </Card>
 
-      {/* Fil d'actu */}
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
           <Newspaper className="w-4 h-4 text-primary" />
@@ -191,7 +184,6 @@ export function NewsFeed() {
         )}
       </Card>
 
-      {/* Modal lecture article */}
       {selectedNews && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setSelectedNews(null)}>
           <div className="bg-card border border-border/50 rounded-2xl p-6 max-w-lg w-full shadow-xl" onClick={e => e.stopPropagation()}>
