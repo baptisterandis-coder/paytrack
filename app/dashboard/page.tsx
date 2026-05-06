@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { SalaryChart } from "@/components/dashboard/SalaryChart";
 import { CareerChart } from "@/components/dashboard/CareerChart";
+import { NewsFeed } from "@/components/dashboard/NewsFeed";
 import { PayslipFeed } from "@/components/dashboard/PayslipFeed";
 import { Goals } from "@/components/dashboard/Goals";
 import { AchievementBadges } from "@/components/dashboard/AchievementBadges";
@@ -140,6 +141,8 @@ export default function DashboardPage() {
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
+
+            {/* Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard
                 title={`Cumul net ${currentYear}`}
@@ -180,100 +183,116 @@ export default function DashboardPage() {
               />
             </div>
 
-            {/* Bloc CAGR */}
-            {availableYears.length >= 2 && (
-              <Card className="p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                      📈 CAGR — Croissance annuelle moyenne
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                      Taux de croissance de ton salaire brut sur la période
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">De</span>
-                      <select
-                        value={fromYear ?? ""}
-                        onChange={e => setCagrFromYear(Number(e.target.value))}
-                        className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
-                      >
-                        {availableYears.slice(0, -1).map(y => (
-                          <option key={y} value={y}>{y}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">À</span>
-                      <select
-                        value={toYear ?? ""}
-                        onChange={e => setCagrToYear(Number(e.target.value))}
-                        className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
-                      >
-                        {availableYears.slice(1).map(y => (
-                          <option key={y} value={y}>{y}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {cagr !== null && (
-                      <div className={`px-4 py-2 rounded-xl font-bold text-lg ${cagr >= 0 ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
-                        {cagr > 0 ? "+" : ""}{cagr.toFixed(1)}%/an
+            {/* Layout 2 colonnes */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+              {/* Colonne gauche 70% */}
+              <div className="lg:col-span-2 space-y-6">
+
+                {/* Bloc CAGR */}
+                {availableYears.length >= 2 && (
+                  <Card className="p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          📈 CAGR — Croissance annuelle moyenne
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-0.5">
+                          Taux de croissance de ton salaire brut sur la période
+                        </p>
                       </div>
-                    )}
-                  </div>
-                </div>
-                {cagr !== null && fromYear && toYear && (
-                  <p className="text-xs text-muted-foreground mt-3">
-                    De <strong className="text-foreground">{fromYear}</strong> à <strong className="text-foreground">{toYear}</strong> — {toYear - fromYear} an{toYear - fromYear > 1 ? "s" : ""} · Brut {yearlyTotals.find(y => y.year === fromYear) ? formatCurrency(yearlyTotals.find(y => y.year === fromYear)!.totalGross) : ""} → {yearlyTotals.find(y => y.year === toYear) ? formatCurrency(yearlyTotals.find(y => y.year === toYear)!.totalGross) : ""}
-                  </p>
-                )}
-              </Card>
-            )}
-
-            <SalaryChart data={stats.monthlyData} />
-
-            <CareerChart payslips={payslips} birthDate={profile?.birth_date ?? null} />
-
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Actions Rapides</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button onClick={() => setTab("payslips")}
-                  className="flex items-center gap-3 p-4 border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors text-left">
-                  <Upload className="w-5 h-5 text-primary flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Tous les bulletins</p>
-                    <p className="text-sm text-muted-foreground">{payslips.length} enregistré{payslips.length > 1 ? "s" : ""}</p>
-                  </div>
-                </button>
-                <button onClick={() => setTab("achievements")}
-                  className="flex items-center gap-3 p-4 border border-success/20 rounded-xl hover:bg-success/5 transition-colors text-left">
-                  <TrendingUp className="w-5 h-5 text-success flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Mes Achievements</p>
-                    <p className="text-sm text-muted-foreground">Voir mes badges</p>
-                  </div>
-                </button>
-                <button onClick={() => setTab("goals")}
-                  className="flex flex-col p-4 border border-warning/20 rounded-xl hover:bg-warning/5 transition-colors text-left">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Target className="w-5 h-5 text-warning flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">Objectif Annuel Brut</p>
-                      <p className="text-sm text-muted-foreground">Progression {currentYear}</p>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">De</span>
+                          <select
+                            value={fromYear ?? ""}
+                            onChange={e => setCagrFromYear(Number(e.target.value))}
+                            className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
+                          >
+                            {availableYears.slice(0, -1).map(y => (
+                              <option key={y} value={y}>{y}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">À</span>
+                          <select
+                            value={toYear ?? ""}
+                            onChange={e => setCagrToYear(Number(e.target.value))}
+                            className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
+                          >
+                            {availableYears.slice(1).map(y => (
+                              <option key={y} value={y}>{y}</option>
+                            ))}
+                          </select>
+                        </div>
+                        {cagr !== null && (
+                          <div className={`px-4 py-2 rounded-xl font-bold text-lg ${cagr >= 0 ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
+                            {cagr > 0 ? "+" : ""}{cagr.toFixed(1)}%/an
+                          </div>
+                        )}
+                      </div>
                     </div>
+                    {cagr !== null && fromYear && toYear && (
+                      <p className="text-xs text-muted-foreground mt-3">
+                        De <strong className="text-foreground">{fromYear}</strong> à <strong className="text-foreground">{toYear}</strong> — {toYear - fromYear} an{toYear - fromYear > 1 ? "s" : ""} · Brut {formatCurrency(yearlyTotals.find(y => y.year === fromYear)?.totalGross)} → {formatCurrency(yearlyTotals.find(y => y.year === toYear)?.totalGross)}
+                      </p>
+                    )}
+                  </Card>
+                )}
+
+                <SalaryChart data={stats.monthlyData} />
+                <CareerChart payslips={payslips} birthDate={profile?.birth_date ?? null} />
+
+                {/* Actions Rapides */}
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Actions Rapides</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onClick={() => setTab("payslips")}
+                      className="flex items-center gap-3 p-4 border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors text-left">
+                      <Upload className="w-5 h-5 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Tous les bulletins</p>
+                        <p className="text-sm text-muted-foreground">{payslips.length} enregistré{payslips.length > 1 ? "s" : ""}</p>
+                      </div>
+                    </button>
+                    <button onClick={() => setTab("achievements")}
+                      className="flex items-center gap-3 p-4 border border-success/20 rounded-xl hover:bg-success/5 transition-colors text-left">
+                      <TrendingUp className="w-5 h-5 text-success flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Mes Achievements</p>
+                        <p className="text-sm text-muted-foreground">Voir mes badges</p>
+                      </div>
+                    </button>
+                    <button onClick={() => setTab("goals")}
+                      className="flex flex-col p-4 border border-warning/20 rounded-xl hover:bg-warning/5 transition-colors text-left">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Target className="w-5 h-5 text-warning flex-shrink-0" />
+                        <div>
+                          <p className="font-medium">Objectif Annuel Brut</p>
+                          <p className="text-sm text-muted-foreground">Progression {currentYear}</p>
+                        </div>
+                      </div>
+                      <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                        <div className="h-full bg-warning transition-all duration-500 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }} />
+                      </div>
+                      <div className="flex justify-between items-center mt-2 text-xs">
+                        <span className="text-muted-foreground">{formatCurrency(stats.totalGross)}{annualGoal ? ` / ${formatCurrency(annualGoal.target_amount)}` : ""}</span>
+                        <span className="font-bold text-primary">{progress.toFixed(0)}%</span>
+                      </div>
+                    </button>
                   </div>
-                  <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-warning transition-all duration-500 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }} />
-                  </div>
-                  <div className="flex justify-between items-center mt-2 text-xs">
-                    <span className="text-muted-foreground">{formatCurrency(stats.totalGross)}{annualGoal ? ` / ${formatCurrency(annualGoal.target_amount)}` : ""}</span>
-                    <span className="font-bold text-primary">{progress.toFixed(0)}%</span>
-                  </div>
-                </button>
+                </Card>
               </div>
-            </Card>
+
+              {/* Colonne droite 30% — NewsFeed */}
+              <div className="lg:col-span-1">
+                <div className="sticky top-6">
+                  <NewsFeed />
+                </div>
+              </div>
+            </div>
+
           </TabsContent>
 
           <TabsContent value="payslips"><PayslipFeed /></TabsContent>
