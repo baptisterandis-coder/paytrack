@@ -58,7 +58,6 @@ export default function DashboardPage() {
     };
   }, [payslips, currentYear]);
 
-  // CAGR
   const yearlyTotals = useMemo(() => {
     const totals = buildYearlyTotals(payslips);
     return Object.values(totals).sort((a, b) => a.year - b.year);
@@ -95,7 +94,10 @@ export default function DashboardPage() {
 
         <header className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
+            <h1
+              className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => setTab("dashboard")}
+            >
               PayTrack
             </h1>
             <p className="text-muted-foreground text-sm mt-1">Tableau de bord {currentYear}</p>
