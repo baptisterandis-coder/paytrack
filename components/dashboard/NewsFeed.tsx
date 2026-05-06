@@ -14,11 +14,14 @@ interface NewsItem {
 }
 
 const RSS_FEEDS = [
-  { source: "Service-Public", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.service-public.fr/rss/particuliers.xml" },
-  { source: "URSSAF", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.urssaf.fr/portail/home/actualites/toute-lactualite.rss.html" },
+  { source: "Le Monde", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.lemonde.fr/economie/rss_full.xml" },
+  { source: "Les Echos", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.lesechos.fr/rss/rss_une.xml" },
+  { source: "Capital", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.capital.fr/feed" },
+  { source: "Challenges", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.challenges.fr/rss.xml" },
+  { source: "BFM Business", url: "https://api.rss2json.com/v1/api.json?rss_url=https://bfmbusiness.bfmtv.com/rss/news-flash/" },
 ];
 
-const KEYWORDS = ["salaire", "paie", "smic", "cotisation", "prélèvement", "retraite", "emploi", "travail", "fiscal", "impôt", "rémunération", "charges", "agirc", "arrco"];
+const KEYWORDS = ["salaire", "paie", "smic", "cotisation", "prélèvement", "retraite", "emploi", "travail", "fiscal", "impôt", "rémunération", "charges", "agirc", "arrco", "convention collective", "code du travail", "bulletin", "net", "brut"];
 
 function filterRelevant(items: any[], source: string): NewsItem[] {
   return items
@@ -26,7 +29,7 @@ function filterRelevant(items: any[], source: string): NewsItem[] {
       const text = `${item.title} ${item.description}`.toLowerCase();
       return KEYWORDS.some(k => text.includes(k));
     })
-    .slice(0, 5)
+    .slice(0, 3)
     .map(item => ({
       date: new Date(item.pubDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }),
       title: item.title.replace(/<[^>]*>/g, "").trim(),
@@ -58,7 +61,7 @@ export function NewsFeed() {
           .filter(r => r.status === "fulfilled")
           .flatMap(r => (r as PromiseFulfilledResult<NewsItem[]>).value)
           .sort((a, b) => b.date.split("/").reverse().join("-").localeCompare(a.date.split("/").reverse().join("-")))
-          .slice(0, 8);
+          .slice(0, 10);
         setNews(allNews);
       } catch (e) {
         console.error("RSS error:", e);
@@ -84,7 +87,11 @@ export function NewsFeed() {
         return;
       }
 
-      if (news.length === 0) return;
+      if (news.length === 0) {
+        setDailySummary("Pas d'actualité majeure aujourd'hui.");
+        return;
+      }
+
       setLoadingSummary(true);
 
       try {
@@ -129,6 +136,7 @@ export function NewsFeed() {
 
   return (
     <div className="space-y-4">
+      {/* Synthèse du jour */}
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
           <span className="text-base">📰</span>
@@ -144,10 +152,11 @@ export function NewsFeed() {
         ) : dailySummary ? (
           <p className="text-sm text-foreground leading-relaxed">{dailySummary}</p>
         ) : (
-          <p className="text-sm text-muted-foreground">Chargement de la synthèse...</p>
+          <p className="text-sm text-muted-foreground">Chargement...</p>
         )}
       </Card>
 
+      {/* Fil d'actu */}
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
           <Newspaper className="w-4 h-4 text-primary" />
@@ -163,7 +172,7 @@ export function NewsFeed() {
             ))}
           </div>
         ) : news.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aucune actualité disponible.</p>
+          <p className="text-sm text-muted-foreground">Pas d'actualité majeure aujourd'hui.</p>
         ) : (
           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
             {news.map((item, i) => (
@@ -184,6 +193,7 @@ export function NewsFeed() {
         )}
       </Card>
 
+      {/* Modal lecture article */}
       {selectedNews && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setSelectedNews(null)}>
           <div className="bg-card border border-border/50 rounded-2xl p-6 max-w-lg w-full shadow-xl" onClick={e => e.stopPropagation()}>
@@ -196,7 +206,7 @@ export function NewsFeed() {
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">{selectedNews.summary}</p>
             <a href={selectedNews.url} target="_blank" rel="noopener noreferrer"
-              className="text-sm text-primary hover:underline flex items-center gap-1">
+              className="text-sm text-primary hover:underline">
               Lire l'article complet →
             </a>
           </div>
