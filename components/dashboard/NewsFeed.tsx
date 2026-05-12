@@ -15,13 +15,13 @@ interface NewsItem {
 
 const RSS_FEEDS = [
   { source: "Le Monde", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.lemonde.fr/economie/rss_full.xml" },
-  { source: "Les Echos", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.lesechos.fr/rss/rss_une.xml" },
-  { source: "Capital", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.capital.fr/feed" },
   { source: "Challenges", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.challenges.fr/rss.xml" },
-  { source: "BFM Business", url: "https://api.rss2json.com/v1/api.json?rss_url=https://bfmbusiness.bfmtv.com/rss/news-flash/" },
+  { source: "L'Express", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.lexpress.fr/rss/alaune.xml" },
+  { source: "Le Figaro", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.lefigaro.fr/rss/figaro_economie.xml" },
+  { source: "20 Minutes", url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.20minutes.fr/feeds/rss-economie.xml" },
 ];
 
-const KEYWORDS = ["salaire", "paie", "smic", "cotisation", "prélèvement", "retraite", "emploi", "travail", "fiscal", "impôt", "rémunération", "charges", "agirc", "arrco", "convention collective", "code du travail", "bulletin", "net", "brut"];
+const KEYWORDS = ["salaire", "paie", "smic", "cotisation", "prélèvement", "retraite", "emploi", "travail", "fiscal", "impôt", "rémunération", "charges", "agirc", "arrco", "convention collective", "code du travail", "bulletin", "net", "brut", "pouvoir d'achat"];
 
 function filterRelevant(items: any[], source: string): NewsItem[] {
   return items
@@ -71,11 +71,8 @@ export function NewsFeed() {
 
   return (
     <div className="space-y-4">
-
-      {/* KPI économiques */}
       <KpiFeed />
 
-      {/* Fil d'actu */}
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
           <Newspaper className="w-4 h-4 text-primary" />
@@ -112,7 +109,6 @@ export function NewsFeed() {
         )}
       </Card>
 
-      {/* Modal lecture article */}
       {selectedNews && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setSelectedNews(null)}>
           <div className="bg-card border border-border/50 rounded-2xl p-6 max-w-lg w-full shadow-xl" onClick={e => e.stopPropagation()}>
