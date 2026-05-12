@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Newspaper } from "lucide-react";
+import { KpiFeed } from "@/components/dashboard/KpiFeed";
 
 interface NewsItem {
   date: string;
@@ -69,41 +70,49 @@ export function NewsFeed() {
   }, []);
 
   return (
-    <Card className="p-4">
-      <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
-        <Newspaper className="w-4 h-4 text-primary" />
-        <h3 className="font-semibold text-sm">Actu Paie & Emploi</h3>
-      </div>
-      {loadingNews ? (
-        <div className="space-y-4">
-          {[1,2,3,4].map(i => (
-            <div key={i} className="space-y-1.5">
-              <div className="h-3 bg-muted/30 rounded animate-pulse w-24" />
-              <div className="h-4 bg-muted/20 rounded animate-pulse" />
-            </div>
-          ))}
-        </div>
-      ) : news.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Pas d'actualité majeure aujourd'hui.</p>
-      ) : (
-        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
-          {news.map((item, i) => (
-            <div key={i} className="border-b border-border/30 pb-3 last:border-0">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-xs text-primary font-medium">{item.date}</p>
-                <span className="text-xs text-muted-foreground bg-muted/20 px-2 py-0.5 rounded-full">{item.source}</span>
-              </div>
-              <button
-                onClick={() => setSelectedNews(item)}
-                className="text-sm font-medium text-left hover:text-primary transition-colors leading-snug"
-              >
-                {item.title}
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="space-y-4">
 
+      {/* KPI économiques */}
+      <KpiFeed />
+
+      {/* Fil d'actu */}
+      <Card className="p-4">
+        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
+          <Newspaper className="w-4 h-4 text-primary" />
+          <h3 className="font-semibold text-sm">Actu Paie & Emploi</h3>
+        </div>
+        {loadingNews ? (
+          <div className="space-y-4">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="space-y-1.5">
+                <div className="h-3 bg-muted/30 rounded animate-pulse w-24" />
+                <div className="h-4 bg-muted/20 rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+        ) : news.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Pas d'actualité majeure aujourd'hui.</p>
+        ) : (
+          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+            {news.map((item, i) => (
+              <div key={i} className="border-b border-border/30 pb-3 last:border-0">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-primary font-medium">{item.date}</p>
+                  <span className="text-xs text-muted-foreground bg-muted/20 px-2 py-0.5 rounded-full">{item.source}</span>
+                </div>
+                <button
+                  onClick={() => setSelectedNews(item)}
+                  className="text-sm font-medium text-left hover:text-primary transition-colors leading-snug"
+                >
+                  {item.title}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* Modal lecture article */}
       {selectedNews && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setSelectedNews(null)}>
           <div className="bg-card border border-border/50 rounded-2xl p-6 max-w-lg w-full shadow-xl" onClick={e => e.stopPropagation()}>
@@ -122,6 +131,6 @@ export function NewsFeed() {
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }
