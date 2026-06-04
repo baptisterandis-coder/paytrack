@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { EditPayslipModal } from "./EditPayslipModal";
 import { usePayslips } from "@/hooks/usePayslips";
 import { formatCurrency, formatPeriod, type Payslip } from "@/utils/salary";
@@ -41,12 +40,12 @@ function AiComment({ comment }: { comment: string }) {
   );
 }
 
-const TEMPLATE_DATA = [
-  ["Mois (1-12)", "Année", "Entreprise", "Salaire Brut (€)", "Salaire Net (€)", "Impôt / PAS (€)"],
-  [1, 2025, "Digital Prisma", 5646, 3855, 508],
-  [2, 2025, "Digital Prisma", 5917, 4046, 532],
-  [3, 2025, "Digital Prisma", 15146, 10531, 1358],
-  [4, 2025, "Digital Prisma", 5769, 3942, 519],
+const TEMPLATE_ROWS = [
+  "Mois (1-12),Année,Entreprise,Salaire Brut (€),Salaire Net (€),Impôt / PAS (€)",
+  "1,2025,Digital Prisma,5646,3855,508",
+  "2,2025,Digital Prisma,5917,4046,532",
+  "3,2025,Digital Prisma,15146,10531,1358",
+  "4,2025,Digital Prisma,5769,3942,519",
 ];
 
 export function PayslipFeed() {
@@ -68,17 +67,9 @@ export function PayslipFeed() {
     setDeleting(null);
   };
 
-  const downloadExcelTemplate = () => {
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(TEMPLATE_DATA);
-    ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 18 }];
-    XLSX.utils.book_append_sheet(wb, ws, "Bulletins de paie");
-    XLSX.writeFile(wb, "paytrack_template.xlsx");
-  };
-
-  const downloadCsvTemplate = () => {
-    const rows = TEMPLATE_DATA.map(row => row.join(",")).join("\n");
-    const blob = new Blob([rows], { type: "text/csv;charset=utf-8;" });
+  const downloadTemplate = () => {
+    const csv = TEMPLATE_ROWS.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -91,15 +82,12 @@ export function PayslipFeed() {
 
   const parseAndImport = async (rows: any[][]) => {
     const dataRows = rows.slice(1).filter(row => row[0] && row[1] && row[3] && row[4]);
-
     if (dataRows.length === 0) {
       setImportResult("❌ Aucune donnée valide trouvée dans le fichier.");
       return;
     }
-
     let success = 0;
     let errors = 0;
-
     for (const row of dataRows) {
       const month = parseInt(row[0]);
       const yr = parseInt(row[1]);
@@ -107,12 +95,10 @@ export function PayslipFeed() {
       const gross = parseFloat(row[3]);
       const net = parseFloat(row[4]);
       const tax = row[5] ? parseFloat(row[5]) : null;
-
       if (month < 1 || month > 12 || yr < 2000 || isNaN(gross) || isNaN(net)) {
         errors++;
         continue;
       }
-
       try {
         await importFromExcel({ month, year: yr, company, gross, net, tax });
         success++;
@@ -120,7 +106,6 @@ export function PayslipFeed() {
         errors++;
       }
     }
-
     setImportResult(`✅ ${success} bulletin${success > 1 ? "s" : ""} importé${success > 1 ? "s" : ""} avec succès${errors > 0 ? ` · ❌ ${errors} erreur${errors > 1 ? "s" : ""}` : ""}.`);
   };
 
@@ -129,10 +114,8 @@ export function PayslipFeed() {
     if (!file) return;
     setImporting(true);
     setImportResult(null);
-
     try {
       const buffer = await file.arrayBuffer();
-
       if (file.name.endsWith(".csv")) {
         const text = new TextDecoder("utf-8").decode(buffer);
         const rows = text.split("\n").filter(l => l.trim()).map(l => l.split(",").map(v => v.trim()));
@@ -140,7 +123,7 @@ export function PayslipFeed() {
       } else {
         const wb = XLSX.read(buffer, { type: "array" });
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json<any>(ws, { header: 1 });
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
         await parseAndImport(rows);
       }
     } catch {
@@ -165,35 +148,15 @@ export function PayslipFeed() {
           <Badge variant="secondary">{filtered.length}</Badge>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-
-          {/* Dropdown Templates */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <FileSpreadsheet className="w-4 h-4 text-success" />
-                <span className="hidden sm:inline">Templates</span>
-                <ChevronDown className="w-3 h-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={downloadExcelTemplate} className="gap-2 cursor-pointer">
-                <FileSpreadsheet className="w-4 h-4 text-success" />
-                Télécharger Excel (.xlsx)
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={downloadCsvTemplate} className="gap-2 cursor-pointer">
-                <FileSpreadsheet className="w-4 h-4 text-warning" />
-                Télécharger CSV (.csv)
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Bouton Importer */}
+          <Button variant="outline" size="sm" onClick={downloadTemplate} className="gap-2">
+            <FileSpreadsheet className="w-4 h-4 text-success" />
+            <span className="hidden sm:inline">Template</span>
+          </Button>
           <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={importing} className="gap-2">
             <Upload className="w-4 h-4 text-primary" />
             <span className="hidden sm:inline">{importing ? "Import..." : "Importer"}</span>
           </Button>
           <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={handleImport} />
-
           {years.length > 0 && (
             <Select value={year} onValueChange={setYear}>
               <SelectTrigger className="w-40"><SelectValue placeholder="Toutes années" /></SelectTrigger>
@@ -219,16 +182,10 @@ export function PayslipFeed() {
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">Aucun bulletin</h3>
           <p className="text-muted-foreground text-sm mb-4">Uploadez votre premier bulletin ou importez un fichier Excel/CSV</p>
-          <div className="flex gap-2 justify-center">
-            <Button variant="outline" onClick={downloadExcelTemplate} className="gap-2">
-              <FileSpreadsheet className="w-4 h-4 text-success" />
-              Template Excel
-            </Button>
-            <Button variant="outline" onClick={downloadCsvTemplate} className="gap-2">
-              <FileSpreadsheet className="w-4 h-4 text-warning" />
-              Template CSV
-            </Button>
-          </div>
+          <Button variant="outline" onClick={downloadTemplate} className="gap-2">
+            <FileSpreadsheet className="w-4 h-4 text-success" />
+            Télécharger le template
+          </Button>
         </div>
       ) : (
         <div className="space-y-4">
