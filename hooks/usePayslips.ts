@@ -81,7 +81,6 @@ export function usePayslips() {
     if (ins) throw ins;
     await fetch();
 
-    // Extraction automatique si PDF
     if (file.type === "application/pdf" && inserted) {
       const { data: allPayslips } = await supabase
         .from("payslips").select("*").eq("user_id", user.id);
@@ -108,6 +107,38 @@ export function usePayslips() {
         await fetch();
       }
     }
+  };
+
+  const importFromExcel = async ({ month, year, company, gross, net, tax }: {
+    month: number;
+    year: number;
+    company: string | null;
+    gross: number;
+    net: number;
+    tax: number | null;
+  }) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Non authentifié");
+
+    const fileName = `import-${year}-${String(month).padStart(2, "0")}${company ? `-${company.replace(/\s+/g, "-").toLowerCase()}` : ""}.xlsx`;
+
+    await supabase.from("payslips").insert({
+      user_id: user.id,
+      file_name: fileName,
+      file_path: `${user.id}/imports/${fileName}`,
+      file_size: 0,
+      period_month: month,
+      period_year: year,
+      company_name: company,
+      gross_salary: gross,
+      net_salary: net,
+      net_after_tax: net,
+      charges: tax,
+      processed: true,
+      processing_status: "completed",
+    });
+
+    await fetch();
   };
 
   const deletePayslip = async (id: string) => {
@@ -143,5 +174,5 @@ export function usePayslips() {
     fetch();
   }, [fetch]);
 
-  return { payslips, loading, error, refetch: fetch, uploadPayslip, deletePayslip, downloadPayslip, updatePayslip };
+  return { payslips, loading, error, refetch: fetch, uploadPayslip, deletePayslip, downloadPayslip, updatePayslip, importFromExcel };
 }
