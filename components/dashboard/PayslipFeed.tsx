@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { EditPayslipModal } from "./EditPayslipModal";
 import { usePayslips } from "@/hooks/usePayslips";
 import { formatCurrency, formatPeriod, type Payslip } from "@/utils/salary";
@@ -133,12 +134,10 @@ export function PayslipFeed() {
       const buffer = await file.arrayBuffer();
 
       if (file.name.endsWith(".csv")) {
-        // Lecture CSV
         const text = new TextDecoder("utf-8").decode(buffer);
         const rows = text.split("\n").filter(l => l.trim()).map(l => l.split(",").map(v => v.trim()));
         await parseAndImport(rows);
       } else {
-        // Lecture Excel
         const wb = XLSX.read(buffer, { type: "array" });
         const ws = wb.Sheets[wb.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json<any>(ws, { header: 1 });
@@ -166,14 +165,29 @@ export function PayslipFeed() {
           <Badge variant="secondary">{filtered.length}</Badge>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={downloadExcelTemplate} className="gap-2">
-            <FileSpreadsheet className="w-4 h-4 text-success" />
-            <span className="hidden sm:inline">Template Excel</span>
-          </Button>
-          <Button variant="outline" size="sm" onClick={downloadCsvTemplate} className="gap-2">
-            <FileSpreadsheet className="w-4 h-4 text-warning" />
-            <span className="hidden sm:inline">Template CSV</span>
-          </Button>
+
+          {/* Dropdown Templates */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <FileSpreadsheet className="w-4 h-4 text-success" />
+                <span className="hidden sm:inline">Templates</span>
+                <ChevronDown className="w-3 h-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={downloadExcelTemplate} className="gap-2 cursor-pointer">
+                <FileSpreadsheet className="w-4 h-4 text-success" />
+                Télécharger Excel (.xlsx)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={downloadCsvTemplate} className="gap-2 cursor-pointer">
+                <FileSpreadsheet className="w-4 h-4 text-warning" />
+                Télécharger CSV (.csv)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Bouton Importer */}
           <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={importing} className="gap-2">
             <Upload className="w-4 h-4 text-primary" />
             <span className="hidden sm:inline">{importing ? "Import..." : "Importer"}</span>
