@@ -14,28 +14,61 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [needsConfirm, setNeedsConfirm] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  const friendlyError = (err: { code?: string; message: string }) => {
+    switch (err.code) {
+      case "invalid_credentials": return "Email ou mot de passe incorrect.";
+      case "email_not_confirmed": return "Votre email n'est pas encore confirmé. Vérifiez votre boîte mail (pensez aux spams).";
+      case "email_address_invalid": return "Adresse email invalide ou refusée par le serveur.";
+      case "user_already_exists":
+      case "email_exists": return "Un compte existe déjà avec cet email. Connectez-vous.";
+      case "weak_password": return "Mot de passe trop faible (6 caractères minimum).";
+      case "over_email_send_rate_limit":
+      case "over_request_rate_limit": return "Trop de tentatives. Réessayez dans quelques minutes.";
+      default: return err.message || "Une erreur est survenue.";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setMessage("");
+    setNeedsConfirm(false);
 
     if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
         email, password,
         options: { data: { full_name: fullName }, emailRedirectTo: `${window.location.origin}/dashboard` },
       });
-      if (error) setError(error.message);
+      if (error) setError(friendlyError(error));
       else setMessage("Vérifiez votre email pour confirmer votre compte.");
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError("Email ou mot de passe incorrect.");
-      else router.push("/dashboard");
+      if (error) {
+        setError(friendlyError(error));
+        setNeedsConfirm(error.code === "email_not_confirmed");
+      } else {
+        router.push("/dashboard");
+        router.refresh();
+      }
     }
     setLoading(false);
+  };
+
+  const resendConfirmation = async () => {
+    setError("");
+    setMessage("");
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+    });
+    if (error) setError(friendlyError(error));
+    else setMessage("Email de confirmation renvoyé. Vérifiez votre boîte mail.");
   };
 
   return (
@@ -84,6 +117,12 @@ export default function AuthPage() {
               </button>
             </div>
             {error && <p className="text-danger text-sm bg-danger/10 px-3 py-2 rounded-lg">{error}</p>}
+            {needsConfirm && (
+              <button type="button" onClick={resendConfirmation}
+                className="w-full text-sm text-primary hover:underline">
+                Renvoyer l'email de confirmation
+              </button>
+            )}
             {message && <p className="text-success text-sm bg-success/10 px-3 py-2 rounded-lg">{message}</p>}
             <button type="submit" disabled={loading}
               className="w-full bg-gradient-primary text-white font-medium py-3 rounded-xl shadow-primary hover:opacity-90 transition-opacity disabled:opacity-50">
