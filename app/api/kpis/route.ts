@@ -133,20 +133,20 @@ export async function GET() {
       source: chomageLive ? "live" : "manuel",
     },
     {
+      key: "livret_a",
+      label: "Livret A",
+      value: pct(LIVRET_A),
+      sub: livretASince,
+      alert: LIVRET_A < inflationVal,
+      source: "manuel",
+    },
+    {
       key: "salaire_median",
       label: "Salaire médian",
       value: "2 400 €",
       sub: "net/mois — INSEE",
       alert: false,
       tooltip: "50% des salariés français gagnent moins que ce montant",
-      source: "manuel",
-    },
-    {
-      key: "livret_a",
-      label: "Livret A",
-      value: pct(LIVRET_A),
-      sub: livretASince,
-      alert: LIVRET_A < inflationVal,
       source: "manuel",
     },
   ];

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { FileText, Edit, Trash2, Download, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, Upload, FileSpreadsheet } from "lucide-react";
+import { FileText, Edit, Trash2, Download, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, Upload, FileSpreadsheet, PlusCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EditPayslipModal } from "./EditPayslipModal";
+import { ManualPayslipModal } from "./ManualPayslipModal";
 import { usePayslips } from "@/hooks/usePayslips";
 import { formatCurrency, formatPeriod, type Payslip } from "@/utils/salary";
 import * as XLSX from "xlsx";
@@ -40,12 +41,12 @@ function AiComment({ comment }: { comment: string }) {
   );
 }
 
-const TEMPLATE_ROWS = [
-  "Mois (1-12),Année,Entreprise,Salaire Brut (€),Salaire Net (€),Impôt / PAS (€)",
-  "1,2025,Digital Prisma,5646,3855,508",
-  "2,2025,Digital Prisma,5917,4046,532",
-  "3,2025,Digital Prisma,15146,10531,1358",
-  "4,2025,Digital Prisma,5769,3942,519",
+const TEMPLATE_HEADERS = ["Mois (1-12)", "Année", "Entreprise", "Salaire Brut (€)", "Salaire Net (€)", "Impôt / PAS (€)"];
+const TEMPLATE_EXAMPLE: (string | number)[][] = [
+  [1, 2025, "Entreprise Exemple", 3000, 2350, 250],
+  [2, 2025, "Entreprise Exemple", 3000, 2350, 250],
+  [3, 2025, "Entreprise Exemple", 4500, 3450, 380],
+  [4, 2025, "Entreprise Exemple", 3100, 2420, 260],
 ];
 
 export function PayslipFeed() {
@@ -55,6 +56,7 @@ export function PayslipFeed() {
   const [year, setYear] = useState("all");
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<string | null>(null);
+  const [manualOpen, setManualOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const years = useMemo(() => [...new Set(payslips.map(p => p.period_year))].sort((a, b) => b - a), [payslips]);
@@ -68,12 +70,16 @@ export function PayslipFeed() {
   };
 
   const downloadTemplate = () => {
-    const csv = TEMPLATE_ROWS.join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const ws = XLSX.utils.aoa_to_sheet([TEMPLATE_HEADERS, ...TEMPLATE_EXAMPLE]);
+    ws["!cols"] = [{ wch: 12 }, { wch: 8 }, { wch: 20 }, { wch: 16 }, { wch: 16 }, { wch: 16 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Bulletins");
+    const out = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([out], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "paytrack_template.csv";
+    a.download = "paytrack_modele.xlsx";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -148,15 +154,19 @@ export function PayslipFeed() {
           <Badge variant="secondary">{filtered.length}</Badge>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <Button size="sm" onClick={() => setManualOpen(true)} className="gap-2">
+            <PlusCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">Saisie manuelle</span>
+          </Button>
           <Button variant="outline" size="sm" onClick={downloadTemplate} className="gap-2">
             <FileSpreadsheet className="w-4 h-4 text-success" />
-            <span className="hidden sm:inline">Template</span>
+            <span className="hidden sm:inline">Modèle Excel</span>
           </Button>
           <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={importing} className="gap-2">
             <Upload className="w-4 h-4 text-primary" />
-            <span className="hidden sm:inline">{importing ? "Import..." : "Importer"}</span>
+            <span className="hidden sm:inline">{importing ? "Import..." : "Importer Excel"}</span>
           </Button>
-          <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={handleImport} />
+          <input ref={fileInputRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImport} />
           {years.length > 0 && (
             <Select value={year} onValueChange={setYear}>
               <SelectTrigger className="w-40"><SelectValue placeholder="Toutes années" /></SelectTrigger>
@@ -181,11 +191,17 @@ export function PayslipFeed() {
             <FileText className="w-8 h-8 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">Aucun bulletin</h3>
-          <p className="text-muted-foreground text-sm mb-4">Uploadez votre premier bulletin ou importez un fichier Excel/CSV</p>
-          <Button variant="outline" onClick={downloadTemplate} className="gap-2">
-            <FileSpreadsheet className="w-4 h-4 text-success" />
-            Télécharger le template
-          </Button>
+          <p className="text-muted-foreground text-sm mb-4">Ajoutez votre premier bulletin : saisissez-le à la main ou importez un fichier Excel.</p>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <Button onClick={() => setManualOpen(true)} className="gap-2">
+              <PlusCircle className="w-4 h-4" />
+              Saisie manuelle
+            </Button>
+            <Button variant="outline" onClick={downloadTemplate} className="gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-success" />
+              Modèle Excel
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">
@@ -245,6 +261,7 @@ export function PayslipFeed() {
       )}
 
       {editing && <EditPayslipModal payslip={editing} onClose={() => setEditing(null)} />}
+      {manualOpen && <ManualPayslipModal onClose={() => setManualOpen(false)} />}
     </div>
   );
 }

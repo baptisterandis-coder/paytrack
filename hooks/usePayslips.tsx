@@ -141,6 +141,36 @@ function usePayslipsState() {
     await fetch();
   };
 
+  const addManualPayslip = async ({ month, year, company, gross, net, tax }: {
+    month: number;
+    year: number;
+    company: string | null;
+    gross: number;
+    net: number;
+    tax: number | null;
+  }) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Non authentifié");
+
+    await supabase.from("payslips").insert({
+      user_id: user.id,
+      file_name: `Saisie manuelle — ${String(month).padStart(2, "0")}/${year}`,
+      file_path: `${user.id}/manual/${year}-${String(month).padStart(2, "0")}-${Date.now()}`,
+      file_size: 0,
+      period_month: month,
+      period_year: year,
+      company_name: company,
+      gross_salary: gross,
+      net_salary: net,
+      net_after_tax: net,
+      charges: tax,
+      processed: true,
+      processing_status: "completed",
+    });
+
+    await fetch();
+  };
+
   const deletePayslip = async (id: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -196,7 +226,7 @@ function usePayslipsState() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetch]);
 
-  return { payslips, loading, error, refetch: fetch, uploadPayslip, deletePayslip, downloadPayslip, updatePayslip, importFromExcel };
+  return { payslips, loading, error, refetch: fetch, uploadPayslip, deletePayslip, downloadPayslip, updatePayslip, importFromExcel, addManualPayslip };
 }
 
 type PayslipsContextValue = ReturnType<typeof usePayslipsState>;
