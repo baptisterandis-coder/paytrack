@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Euro, FileText, TrendingUp, Users, User, Upload, Target, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -26,6 +26,28 @@ export default function DashboardPage() {
   const router = useRouter();
   const [tab, setTab] = useState("dashboard");
   const [profileOpen, setProfileOpen] = useState(false);
+
+  // Navigation par swipe horizontal entre onglets (mobile), en plus du menu.
+  const tabOrder = ["dashboard", "payslips", "goals", "achievements", "trophies"];
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const onTabTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartRef.current = { x: t.clientX, y: t.clientY };
+  };
+  const onTabTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStartRef.current;
+    touchStartRef.current = null;
+    if (!start) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    // Geste horizontal franc uniquement (on n'interfère pas avec le scroll vertical).
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const idx = tabOrder.indexOf(tab);
+    if (idx === -1) return;
+    if (dx > 0 && idx < tabOrder.length - 1) setTab(tabOrder[idx + 1]);      // swipe → : onglet suivant
+    else if (dx < 0 && idx > 0) setTab(tabOrder[idx - 1]);                    // swipe ← : onglet précédent
+  };
   const { payslips, loading } = usePayslips();
   const { goals } = useGoals();
   const { profile, getAge } = useProfile();
@@ -140,6 +162,7 @@ export default function DashboardPage() {
             <TabsTrigger value="trophies">Trophées</TabsTrigger>
           </TabsList>
 
+          <div onTouchStart={onTabTouchStart} onTouchEnd={onTabTouchEnd}>
           <TabsContent value="dashboard" className="space-y-6">
 
             {/* Stat Cards */}
@@ -299,6 +322,7 @@ export default function DashboardPage() {
           <TabsContent value="goals"><Goals /></TabsContent>
           <TabsContent value="achievements"><AchievementBadges /></TabsContent>
           <TabsContent value="trophies"><TrophyGallery /></TabsContent>
+          </div>
         </Tabs>
       </div>
 
