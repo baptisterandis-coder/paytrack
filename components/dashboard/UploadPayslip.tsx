@@ -48,9 +48,10 @@ export function UploadPayslip() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
+      <Button onClick={() => setOpen(true)} size="sm">
         <Upload className="w-4 h-4" />
-        Ajouter un bulletin
+        <span className="sm:hidden">Ajouter</span>
+        <span className="hidden sm:inline">Ajouter un bulletin</span>
       </Button>
 
       <Dialog open={open} onOpenChange={v => { if (!uploading) { setOpen(v); if (!v) reset(); } }}>

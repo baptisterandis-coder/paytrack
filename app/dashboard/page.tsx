@@ -132,7 +132,7 @@ export default function DashboardPage() {
         </header>
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-6">
-          <TabsList className="grid grid-cols-5">
+          <TabsList className="flex sm:grid sm:grid-cols-5">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="payslips">Bulletins</TabsTrigger>
             <TabsTrigger value="goals">Objectifs</TabsTrigger>
