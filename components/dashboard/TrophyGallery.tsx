@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { usePayslips } from "@/hooks/usePayslips";
 import { getMonthShort, getMonthLong, formatCurrency, type Payslip } from "@/utils/salary";
+import useEmblaCarousel from "embla-carousel-react";
 
 const MONTHLY_TROPHY_DEFS = [
   { id: "2k",  title: "Premier 2K",  label: "2K",  color: "bg-primary/10 text-primary",  threshold: 2000  },
@@ -119,6 +120,15 @@ function useTrophies(payslips: Payslip[]) {
   }, [payslips]);
 }
 
+function TrophyRow({ children }: { children: React.ReactNode }) {
+  const [emblaRef] = useEmblaCarousel({ align: "start", dragFree: true, containScroll: "trimSnaps" });
+  return (
+    <div className="overflow-hidden py-1" ref={emblaRef}>
+      <div className="flex gap-4">{children}</div>
+    </div>
+  );
+}
+
 export function TrophyGallery() {
   const { payslips, downloadPayslip } = usePayslips();
   const { monthlyMilestones, cumulMilestones, streakMilestones, allTrophies } = useTrophies(payslips);
@@ -178,27 +188,33 @@ export function TrophyGallery() {
       {getFiltered(monthlyMilestones).length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">💰 Salaire mensuel brut</h4>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {getFiltered(monthlyMilestones).map(t => <TrophyCard key={t.id} t={t} />)}
-          </div>
+          <TrophyRow>
+            {getFiltered(monthlyMilestones).map(t => (
+              <div key={t.id} className="flex-[0_0_47%] sm:flex-[0_0_23%] min-w-0"><TrophyCard t={t} /></div>
+            ))}
+          </TrophyRow>
         </div>
       )}
 
       {getFiltered(cumulMilestones).length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">📈 Cumul carrière brut</h4>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            {getFiltered(cumulMilestones).map(t => <TrophyCard key={t.id} t={t} />)}
-          </div>
+          <TrophyRow>
+            {getFiltered(cumulMilestones).map(t => (
+              <div key={t.id} className="flex-[0_0_47%] sm:flex-[0_0_23%] min-w-0"><TrophyCard t={t} /></div>
+            ))}
+          </TrophyRow>
         </div>
       )}
 
       {getFiltered(streakMilestones).length > 0 && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">⚡ Régularité</h4>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            {getFiltered(streakMilestones).map(t => <TrophyCard key={t.id} t={t} />)}
-          </div>
+          <TrophyRow>
+            {getFiltered(streakMilestones).map(t => (
+              <div key={t.id} className="flex-[0_0_47%] sm:flex-[0_0_23%] min-w-0"><TrophyCard t={t} /></div>
+            ))}
+          </TrophyRow>
         </div>
       )}
 
