@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Trophy, Lock, Calendar, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { usePayslips } from "@/hooks/usePayslips";
 import { getMonthShort, getMonthLong, formatCurrency, type Payslip } from "@/utils/salary";
 import useEmblaCarousel from "embla-carousel-react";
+import AutoHeight from "embla-carousel-auto-height";
 
 const MONTHLY_TROPHY_DEFS = [
   { id: "2k",  title: "Premier 2K",  label: "2K",  color: "bg-primary/10 text-primary",  threshold: 2000  },
@@ -120,14 +121,7 @@ function useTrophies(payslips: Payslip[]) {
   }, [payslips]);
 }
 
-function TrophyRow({ children }: { children: React.ReactNode }) {
-  const [emblaRef] = useEmblaCarousel({ align: "start", dragFree: true, containScroll: "trimSnaps" });
-  return (
-    <div className="overflow-hidden py-1" ref={emblaRef}>
-      <div className="flex gap-4">{children}</div>
-    </div>
-  );
-}
+const FILTERS: Filter[] = ["all", "unlocked", "locked"];
 
 export function TrophyGallery() {
   const { payslips, downloadPayslip } = usePayslips();
@@ -135,8 +129,23 @@ export function TrophyGallery() {
   const [selected, setSelected] = useState<typeof allTrophies[0] | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
 
-  const getFiltered = (list: typeof allTrophies) =>
-    list.filter(t => filter === "all" || (filter === "unlocked" ? t.unlocked : !t.unlocked));
+  // Swipe entre les filtres Tous / Débloqués / Bloqués (synchronisé avec les boutons)
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start" }, [AutoHeight()]);
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setFilter(FILTERS[emblaApi.selectedScrollSnap()] ?? "all");
+    emblaApi.on("select", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi]);
+  useEffect(() => {
+    if (!emblaApi) return;
+    const idx = FILTERS.indexOf(filter);
+    if (idx !== -1 && emblaApi.selectedScrollSnap() !== idx) emblaApi.scrollTo(idx);
+  }, [filter, emblaApi]);
+  useEffect(() => { emblaApi?.reInit(); }, [emblaApi, payslips]);
+
+  const filterList = (list: typeof allTrophies, f: Filter) =>
+    list.filter(t => f === "all" || (f === "unlocked" ? t.unlocked : !t.unlocked));
 
   const unlockedCount = allTrophies.filter(t => t.unlocked).length;
 
@@ -166,6 +175,37 @@ export function TrophyGallery() {
     </Card>
   );
 
+  const renderSections = (f: Filter) => {
+    const m = filterList(monthlyMilestones, f);
+    const c = filterList(cumulMilestones, f);
+    const s = filterList(streakMilestones, f);
+    if (m.length + c.length + s.length === 0) {
+      return <div className="text-center py-12 text-muted-foreground text-sm">Aucun trophée dans cette catégorie.</div>;
+    }
+    return (
+      <div className="space-y-10">
+        {m.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">💰 Salaire mensuel brut</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">{m.map(t => <TrophyCard key={t.id} t={t} />)}</div>
+          </div>
+        )}
+        {c.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">📈 Cumul carrière brut</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">{c.map(t => <TrophyCard key={t.id} t={t} />)}</div>
+          </div>
+        )}
+        {s.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">⚡ Régularité</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">{s.map(t => <TrophyCard key={t.id} t={t} />)}</div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-10">
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -185,38 +225,15 @@ export function TrophyGallery() {
         </div>
       </div>
 
-      {getFiltered(monthlyMilestones).length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">💰 Salaire mensuel brut</h4>
-          <TrophyRow>
-            {getFiltered(monthlyMilestones).map(t => (
-              <div key={t.id} className="flex-[0_0_47%] sm:flex-[0_0_23%] min-w-0"><TrophyCard t={t} /></div>
-            ))}
-          </TrophyRow>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex items-start transition-[height] duration-200">
+          {FILTERS.map(f => (
+            <div key={f} className="flex-[0_0_100%] min-w-0">
+              {renderSections(f)}
+            </div>
+          ))}
         </div>
-      )}
-
-      {getFiltered(cumulMilestones).length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">📈 Cumul carrière brut</h4>
-          <TrophyRow>
-            {getFiltered(cumulMilestones).map(t => (
-              <div key={t.id} className="flex-[0_0_47%] sm:flex-[0_0_23%] min-w-0"><TrophyCard t={t} /></div>
-            ))}
-          </TrophyRow>
-        </div>
-      )}
-
-      {getFiltered(streakMilestones).length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">⚡ Régularité</h4>
-          <TrophyRow>
-            {getFiltered(streakMilestones).map(t => (
-              <div key={t.id} className="flex-[0_0_47%] sm:flex-[0_0_23%] min-w-0"><TrophyCard t={t} /></div>
-            ))}
-          </TrophyRow>
-        </div>
-      )}
+      </div>
 
       <Dialog open={!!selected} onOpenChange={v => !v && setSelected(null)}>
         <DialogContent className="max-w-lg">
