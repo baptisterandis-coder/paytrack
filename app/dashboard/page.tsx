@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Euro, FileText, TrendingUp, Users, User, Upload, Target, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -32,6 +32,7 @@ export default function DashboardPage() {
   const [profileOpen, setProfileOpen] = useState(false);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start" }, [AutoHeight()]);
+  const tabsListRef = useRef<HTMLDivElement>(null);
   const { payslips, loading } = usePayslips();
   const { goals } = useGoals();
   const { profile, getAge } = useProfile();
@@ -53,6 +54,20 @@ export default function DashboardPage() {
   useEffect(() => {
     emblaApi?.reInit();
   }, [emblaApi, loading, payslips, goals, profile]);
+  // Garde l'onglet actif visible dans le menu horizontal (mobile) quand on swipe
+  useEffect(() => {
+    const list = tabsListRef.current;
+    if (!list) return;
+    const active = list.querySelector<HTMLElement>('[data-state="active"]');
+    if (!active) return;
+    const listRect = list.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    if (activeRect.left < listRect.left) {
+      list.scrollBy({ left: activeRect.left - listRect.left - 8, behavior: "smooth" });
+    } else if (activeRect.right > listRect.right) {
+      list.scrollBy({ left: activeRect.right - listRect.right + 8, behavior: "smooth" });
+    }
+  }, [tab]);
 
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
@@ -154,7 +169,7 @@ export default function DashboardPage() {
         </header>
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-6">
-          <TabsList className="flex justify-start sm:grid sm:grid-cols-5">
+          <TabsList ref={tabsListRef} className="flex justify-start sm:grid sm:grid-cols-5">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="payslips">Bulletins</TabsTrigger>
             <TabsTrigger value="goals">Objectifs</TabsTrigger>
