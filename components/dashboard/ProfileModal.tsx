@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useProfile } from "@/hooks/useProfile";
-import { User, Briefcase, Calendar, Building } from "lucide-react";
+import { User, Briefcase, Calendar, Building, MapPin, Factory, Award } from "lucide-react";
 
 interface ProfileModalProps {
   open: boolean;
@@ -14,6 +14,9 @@ interface ProfileModalProps {
 }
 
 const CONTRACT_TYPES = ["CDI", "CDD", "Freelance", "Autre"];
+const REGIONS = ["Auvergne-Rhône-Alpes", "Bourgogne-Franche-Comté", "Bretagne", "Centre-Val de Loire", "Corse", "Grand Est", "Hauts-de-France", "Île-de-France", "Normandie", "Nouvelle-Aquitaine", "Occitanie", "Pays de la Loire", "Provence-Alpes-Côte d'Azur", "Outre-mer", "Étranger"];
+const SECTORS = ["Tech / IT", "Finance / Banque / Assurance", "Santé / Médical", "Industrie", "Commerce / Distribution", "BTP / Construction", "Conseil / Services", "Public / Administration", "Éducation / Formation", "Transport / Logistique", "Communication / Média", "Autre"];
+const CADRE_STATUSES = ["Cadre", "Non-cadre", "Cadre dirigeant"];
 
 export function ProfileModal({ open, onClose }: ProfileModalProps) {
   const { profile, saveProfile } = useProfile();
@@ -24,6 +27,9 @@ export function ProfileModal({ open, onClose }: ProfileModalProps) {
     job_title: "",
     company: "",
     contract_type: "CDI",
+    region: "",
+    sector: "",
+    cadre_status: "",
   });
 
   useEffect(() => {
@@ -34,6 +40,9 @@ export function ProfileModal({ open, onClose }: ProfileModalProps) {
         job_title: profile.job_title ?? "",
         company: profile.company ?? "",
         contract_type: profile.contract_type ?? "CDI",
+        region: profile.region ?? "",
+        sector: profile.sector ?? "",
+        cadre_status: profile.cadre_status ?? "",
       });
     }
   }, [profile]);
@@ -85,6 +94,39 @@ export function ProfileModal({ open, onClose }: ProfileModalProps) {
               <Building className="w-4 h-4 text-muted-foreground" /> Entreprise actuelle
             </Label>
             <Input value={form.company} onChange={set("company")} placeholder="Nom de l'entreprise" />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-muted-foreground" /> Région
+            </Label>
+            <select value={form.region} onChange={set("region")}
+              className="w-full h-10 rounded-xl border border-border bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+              <option value="">Sélectionner…</option>
+              {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-2">
+              <Factory className="w-4 h-4 text-muted-foreground" /> Secteur d'activité
+            </Label>
+            <select value={form.sector} onChange={set("sector")}
+              className="w-full h-10 rounded-xl border border-border bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+              <option value="">Sélectionner…</option>
+              {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-2">
+              <Award className="w-4 h-4 text-muted-foreground" /> Statut
+            </Label>
+            <select value={form.cadre_status} onChange={set("cadre_status")}
+              className="w-full h-10 rounded-xl border border-border bg-muted/30 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+              <option value="">Sélectionner…</option>
+              {CADRE_STATUSES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
 
           <div className="space-y-1.5">

@@ -10,6 +10,9 @@ export interface Profile {
   job_title: string | null;
   company: string | null;
   contract_type: string | null;
+  region: string | null;
+  sector: string | null;
+  cadre_status: string | null;
 }
 
 function useProfileState() {
