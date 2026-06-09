@@ -143,6 +143,18 @@ export function TrophyGallery() {
     if (idx !== -1 && emblaApi.selectedScrollSnap() !== idx) emblaApi.scrollTo(idx);
   }, [filter, emblaApi]);
   useEffect(() => { emblaApi?.reInit(); }, [emblaApi, payslips]);
+  // Empêche le swipe sur les filtres de déclencher le carrousel d'onglets parent (imbrication)
+  useEffect(() => {
+    if (!emblaApi) return;
+    const node = emblaApi.rootNode();
+    const stop = (e: Event) => e.stopPropagation();
+    node.addEventListener("pointerdown", stop);
+    node.addEventListener("touchstart", stop, { passive: true });
+    return () => {
+      node.removeEventListener("pointerdown", stop);
+      node.removeEventListener("touchstart", stop);
+    };
+  }, [emblaApi]);
 
   const filterList = (list: typeof allTrophies, f: Filter) =>
     list.filter(t => f === "all" || (f === "unlocked" ? t.unlocked : !t.unlocked));
