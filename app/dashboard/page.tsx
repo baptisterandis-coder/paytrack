@@ -102,12 +102,18 @@ export default function DashboardPage() {
   }, [payslips]);
 
   const availableYears = useMemo(() => yearlyTotals.map(y => y.year), [yearlyTotals]);
+  // Années "complètes" : pas l'année en cours, ou déjà 12 mois enregistrés.
+  const completeYears = useMemo(
+    () => yearlyTotals.filter(t => t.year !== currentYear || t.count >= 12).map(t => t.year),
+    [yearlyTotals, currentYear]
+  );
+  const isYearComplete = (y: number) => completeYears.includes(y);
 
   const [cagrFromYear, setCagrFromYear] = useState<number | null>(null);
   const [cagrToYear, setCagrToYear] = useState<number | null>(null);
 
-  const fromYear = cagrFromYear ?? availableYears[0] ?? null;
-  const toYear = cagrToYear ?? availableYears[availableYears.length - 1] ?? null;
+  const fromYear = cagrFromYear ?? completeYears[0] ?? null;
+  const toYear = cagrToYear ?? completeYears[completeYears.length - 1] ?? null;
 
   const cagr = useMemo(() => {
     if (!fromYear || !toYear || fromYear >= toYear) return null;
@@ -230,7 +236,7 @@ export default function DashboardPage() {
               <div className="lg:col-span-2 space-y-6">
 
                 {/* Bloc CAGR */}
-                {availableYears.length >= 2 && (
+                {completeYears.length >= 2 && (
                   <Card className="p-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
@@ -250,7 +256,7 @@ export default function DashboardPage() {
                             className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
                           >
                             {availableYears.slice(0, -1).map(y => (
-                              <option key={y} value={y}>{y}</option>
+                              <option key={y} value={y} disabled={!isYearComplete(y)}>{y}{isYearComplete(y) ? "" : " (en cours)"}</option>
                             ))}
                           </select>
                         </div>
@@ -262,7 +268,7 @@ export default function DashboardPage() {
                             className="bg-secondary border border-border/50 rounded-lg px-3 py-1.5 text-sm text-foreground"
                           >
                             {availableYears.slice(1).map(y => (
-                              <option key={y} value={y}>{y}</option>
+                              <option key={y} value={y} disabled={!isYearComplete(y)}>{y}{isYearComplete(y) ? "" : " (en cours)"}</option>
                             ))}
                           </select>
                         </div>
