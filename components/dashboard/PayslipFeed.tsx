@@ -20,12 +20,9 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 function AiComment({ comment }: { comment: string }) {
   const [open, setOpen] = useState(false);
-  const renderMarkdown = (text: string) => {
-    return text.split('\n').map((line, i) => {
-      const formatted = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      return <p key={i} className="mb-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
-    });
-  };
+  const lines = comment.split("\n").map(l => l.trim()).filter(Boolean);
+  const clean = (s: string) => s.replace(/\*\*(.*?)\*\*/g, "$1");
+
   return (
     <div className="pt-3 border-t border-border/50">
       <button onClick={() => setOpen(!open)} className="flex items-center gap-2 text-sm text-primary hover:underline">
@@ -33,8 +30,32 @@ function AiComment({ comment }: { comment: string }) {
         {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
       </button>
       {open && (
-        <div className="mt-3 p-4 bg-muted/20 rounded-xl text-sm text-foreground leading-relaxed">
-          {renderMarkdown(comment)}
+        <div className="mt-3 p-4 bg-muted/20 rounded-xl text-sm space-y-0.5">
+          {lines.map((line, i) => {
+            // Titre de section (texte en **gras**, pas une puce)
+            if (/\*\*(.+?)\*\*/.test(line) && !line.startsWith("-")) {
+              return <p key={i} className="font-semibold text-foreground mt-3 first:mt-0">{clean(line)}</p>;
+            }
+            // Élément variable : "- Libellé : montant"
+            if (line.startsWith("-") || line.startsWith("•")) {
+              const item = clean(line.replace(/^[-•]\s*/, ""));
+              const sep = item.lastIndexOf(" : ");
+              if (sep !== -1) {
+                const label = item.slice(0, sep);
+                const value = item.slice(sep + 3);
+                const color = /\+/.test(value) ? "text-success" : /[-−]/.test(value) ? "text-danger" : "text-foreground";
+                return (
+                  <div key={i} className="flex items-baseline justify-between gap-3 py-1.5 border-b border-border/30 last:border-0">
+                    <span className="text-muted-foreground">{label}</span>
+                    <span className={`font-semibold whitespace-nowrap ${color}`}>{value}</span>
+                  </div>
+                );
+              }
+              return <div key={i} className="text-muted-foreground py-1">• {item}</div>;
+            }
+            // Ligne normale (ex. ligne de résumé)
+            return <p key={i} className="text-muted-foreground leading-relaxed">{clean(line)}</p>;
+          })}
         </div>
       )}
     </div>
@@ -212,11 +233,11 @@ export function PayslipFeed() {
                   <FileText className="w-5 h-5 text-primary" />
                 </button>
                 <div className="flex-1 min-w-0 space-y-3">
-                  <div className="flex items-start justify-between gap-2 flex-wrap">
-                    <div>
-                      <h3 className="font-semibold text-foreground truncate">{p.file_name}</h3>
-                      <p className="text-sm text-muted-foreground">{formatPeriod(p.period_month, p.period_year)}</p>
-                      {p.company_name && <p className="text-xs text-muted-foreground mt-0.5">{p.company_name}</p>}
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-foreground capitalize">{formatPeriod(p.period_month, p.period_year)}</h3>
+                      {p.company_name && <p className="text-sm text-muted-foreground truncate">{p.company_name}</p>}
+                      <p className="text-xs text-muted-foreground/70 truncate" title={p.file_name}>{p.file_name}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <StatusBadge status={p.processing_status} />
