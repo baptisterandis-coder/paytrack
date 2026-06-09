@@ -102,9 +102,10 @@ export default function DashboardPage() {
   }, [payslips]);
 
   const availableYears = useMemo(() => yearlyTotals.map(y => y.year), [yearlyTotals]);
-  // Années "complètes" : pas l'année en cours, ou déjà 12 mois enregistrés.
+  // Une année est utilisable pour le CAGR dès qu'elle est terminée (année passée),
+  // quel que soit le nombre de mois (cas des intérimaires). Seule l'année en cours est exclue.
   const completeYears = useMemo(
-    () => yearlyTotals.filter(t => t.year !== currentYear || t.count >= 12).map(t => t.year),
+    () => yearlyTotals.filter(t => t.year < currentYear).map(t => t.year),
     [yearlyTotals, currentYear]
   );
   const isYearComplete = (y: number) => completeYears.includes(y);
