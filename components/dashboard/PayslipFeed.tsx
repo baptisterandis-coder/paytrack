@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { FileText, Edit, Trash2, Download, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, Upload, FileSpreadsheet, PlusCircle } from "lucide-react";
+import { FileText, Edit, Trash2, Download, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, Upload, FileSpreadsheet, PlusCircle, Camera } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -70,15 +70,40 @@ const TEMPLATE_EXAMPLE: (string | number)[][] = [
   [4, 2025, "Entreprise Exemple", 3100, 2420, 260],
 ];
 
+async function resizeImage(file: File, maxDim = 2000, quality = 0.85): Promise<File> {
+  try {
+    const img = await createImageBitmap(file);
+    let width = img.width;
+    let height = img.height;
+    if (Math.max(width, height) > maxDim) {
+      const scale = maxDim / Math.max(width, height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(img, 0, 0, width, height);
+    const blob = await new Promise<Blob | null>(res => canvas.toBlob(res, "image/jpeg", quality));
+    return blob ? new File([blob], `Scan ${new Date().toLocaleDateString("fr-FR")}.jpg`, { type: "image/jpeg" }) : file;
+  } catch {
+    return file;
+  }
+}
+
 export function PayslipFeed() {
-  const { payslips, loading, deletePayslip, downloadPayslip, importFromExcel } = usePayslips();
+  const { payslips, loading, deletePayslip, downloadPayslip, importFromExcel, uploadPayslip } = usePayslips();
   const [editing, setEditing] = useState<Payslip | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [year, setYear] = useState("all");
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<string | null>(null);
   const [manualOpen, setManualOpen] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const scanInputRef = useRef<HTMLInputElement>(null);
 
   const years = useMemo(() => [...new Set(payslips.map(p => p.period_year))].sort((a, b) => b - a), [payslips]);
   const filtered = useMemo(() => year === "all" ? payslips : payslips.filter(p => p.period_year === parseInt(year)), [payslips, year]);
@@ -161,6 +186,23 @@ export function PayslipFeed() {
     }
   };
 
+  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setScanning(true);
+    setImportResult(null);
+    try {
+      const img = await resizeImage(file);
+      await uploadPayslip(img);
+      setImportResult("📸 Bulletin scanné ! Complétez les données via « Saisir les données manuellement » sur la carte.");
+    } catch {
+      setImportResult("❌ Échec du scan.");
+    } finally {
+      setScanning(false);
+      if (scanInputRef.current) scanInputRef.current.value = "";
+    }
+  };
+
   if (loading) return (
     <div className="space-y-4">
       {[1,2,3].map(i => <div key={i} className="h-28 rounded-2xl bg-muted/20 animate-pulse" />)}
@@ -179,6 +221,11 @@ export function PayslipFeed() {
             <PlusCircle className="w-4 h-4" />
             <span className="hidden sm:inline">Saisie manuelle</span>
           </Button>
+          <Button variant="outline" size="sm" onClick={() => scanInputRef.current?.click()} disabled={scanning} className="gap-2">
+            <Camera className="w-4 h-4 text-primary" />
+            <span className="hidden sm:inline">{scanning ? "Scan..." : "Scanner"}</span>
+          </Button>
+          <input ref={scanInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleScan} />
           <Button variant="outline" size="sm" onClick={downloadTemplate} className="gap-2">
             <FileSpreadsheet className="w-4 h-4 text-success" />
             <span className="hidden sm:inline">Modèle Excel</span>
