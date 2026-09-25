@@ -89,12 +89,24 @@ async function fetchEurostatLatest(
 
 export async function GET() {
   // Valeurs maintenues côté serveur (changent rarement, à dates connues).
-  const LIVRET_A = 1.5; // %, fixé par décret (révision 1er fév. / 1er août)
-  const livretASince = "depuis fév. 2026";
+  // Livret A : fixé par arrêté, révisé le 1er février et le 1er août.
+  // Ajouter une ligne à chaque révision : le taux en vigueur est choisi automatiquement.
+  const LIVRET_A_HISTORY: { since: string; rate: number }[] = [
+    { since: "2025-08-01", rate: 1.7 },
+    { since: "2026-02-01", rate: 1.5 },
+    { since: "2026-08-01", rate: 1.7 },
+  ];
+  const livretACurrent = LIVRET_A_HISTORY
+    .filter((r) => new Date(r.since) <= new Date())
+    .sort((a, b) => a.since.localeCompare(b.since))
+    .pop() ?? LIVRET_A_HISTORY[LIVRET_A_HISTORY.length - 1];
+  const LIVRET_A = livretACurrent.rate;
+  const livretASince = `depuis ${monthYear(new Date(livretACurrent.since))}`;
 
   const [smic, inflation, chomage] = await Promise.all([
     fetchSmic(),
-    fetchEurostatLatest("prc_hicp_manr", { coicop: "CP00" }),
+    fetchEurostatLatest("prc_hicp_minr", { coicop18: "TOTAL", unit: "RCH_A" })
+      .then((r) => r ?? fetchEurostatLatest("prc_hicp_manr", { coicop: "CP00" })),
     fetchEurostatLatest("une_rt_m", { sex: "T", age: "TOTAL", unit: "PC_ACT", s_adj: "SA" }),
   ]);
 
