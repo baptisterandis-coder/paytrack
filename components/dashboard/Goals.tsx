@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { PodiumModal } from "@/components/ui/PodiumModal";
 import { useGoals } from "@/hooks/useGoals";
 import { usePayslips } from "@/hooks/usePayslips";
-import { getTopGrossSalaries, getTopYears, formatCurrency, formatPeriod, resolveNetSalary } from "@/utils/salary";
+import { getTopGrossSalaries, getTopYears, formatCurrency, formatPeriod, resolveNetSalary, getMonthLong } from "@/utils/salary";
 
 function GoalForm({ label, placeholder, value, onChange, onSubmit, onCancel, onDelete, editing, btnClass }: {
   label: string; placeholder: string; value: string; onChange: (v: string) => void;
@@ -45,15 +45,17 @@ export function Goals() {
   const annualGoal = goals.find(g => g.goal_type === "annual_gross");
   const monthlyGoal = goals.find(g => g.goal_type === "monthly_gross");
   const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1;
 
   const currentYearPayslips = payslips.filter(p => p.period_year === currentYear);
   const totalGross = currentYearPayslips.reduce((s, p) => s + (p.gross_salary ?? 0), 0);
   const bulletinCount = currentYearPayslips.length;
 
+  // Dernier mois uploadé de l'année en cours (et non le mois du calendrier)
+  const lastUploadedMonth = currentYearPayslips.reduce((max, p) => Math.max(max, p.period_month ?? 0), 0);
+
   const avgMonthlyGross = bulletinCount > 0 ? totalGross / bulletinCount : 0;
   const overallProgress = annualGoal ? Math.min((totalGross / annualGoal.target_amount) * 100, 100) : 0;
-  const expectedSoFar = annualGoal ? (annualGoal.target_amount / 12) * currentMonth : 0;
+  const expectedSoFar = annualGoal ? (annualGoal.target_amount / 12) * lastUploadedMonth : 0;
   const delta = annualGoal ? totalGross - expectedSoFar : 0;
   const isAhead = delta >= 0;
 
@@ -119,7 +121,9 @@ export function Goals() {
                   <span className="font-semibold">{formatCurrency(totalGross)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Avance / Retard</span>
+                  <span className="text-muted-foreground">
+                    Avance / Retard{lastUploadedMonth > 0 ? ` (fin ${getMonthLong(lastUploadedMonth).toLowerCase()})` : ""}
+                  </span>
                   <span className={`font-semibold ${isAhead ? "text-success" : "text-danger"}`}>
                     {isAhead ? "+" : ""}{formatCurrency(delta)}
                   </span>
