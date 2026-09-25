@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { SalaryChart } from "@/components/dashboard/SalaryChart";
 import { CareerChart } from "@/components/dashboard/CareerChart";
-import { NewsFeed } from "@/components/dashboard/NewsFeed";
+import { KpiFeed } from "@/components/dashboard/KpiFeed";
+import { PurchasingPower } from "@/components/dashboard/PurchasingPower";
 import { PayslipFeed } from "@/components/dashboard/PayslipFeed";
 import { Goals } from "@/components/dashboard/Goals";
 import { AchievementBadges } from "@/components/dashboard/AchievementBadges";
@@ -332,10 +333,13 @@ export default function DashboardPage() {
                 </Card>
               </div>
 
-              {/* Colonne droite 30% — NewsFeed */}
+              {/* Colonne droite 30% — Indicateurs + Pouvoir d'achat */}
               <div className="lg:col-span-1">
                 <div className="sticky top-6">
-                  <NewsFeed />
+                  <div className="space-y-4">
+                    <KpiFeed />
+                    <PurchasingPower payslips={payslips} />
+                  </div>
                 </div>
               </div>
             </div>
