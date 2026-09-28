@@ -59,6 +59,23 @@ export default function AuthPage() {
     setLoading(false);
   };
 
+  const forgotPassword = async () => {
+    setError("");
+    setMessage("");
+    setNeedsConfirm(false);
+    if (!email) {
+      setError("Saisissez d'abord votre email ci-dessus.");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset`,
+    });
+    setLoading(false);
+    if (error) setError(friendlyError(error));
+    else setMessage("Si un compte existe avec cet email, vous allez recevoir un lien pour choisir un nouveau mot de passe (pensez aux spams).");
+  };
+
   const resendConfirmation = async () => {
     setError("");
     setMessage("");
@@ -116,6 +133,14 @@ export default function AuthPage() {
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
+            {mode === "signin" && (
+              <div className="text-right -mt-2">
+                <button type="button" onClick={forgotPassword} disabled={loading}
+                  className="text-xs text-muted-foreground hover:text-primary hover:underline disabled:opacity-50">
+                  Mot de passe oublié ?
+                </button>
+              </div>
+            )}
             {error && <p className="text-danger text-sm bg-danger/10 px-3 py-2 rounded-lg">{error}</p>}
             {needsConfirm && (
               <button type="button" onClick={resendConfirmation}
