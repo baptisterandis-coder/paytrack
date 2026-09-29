@@ -3,13 +3,13 @@ import "./globals.css";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
-  title: "PayTrack — Suivi de bulletins de paie",
-  description: "Analysez et suivez l'évolution de vos bulletins de paie avec PayTrack.",
+  title: "paytrak — Suivi de bulletins de paie",
+  description: "Analysez et suivez l'évolution de vos bulletins de paie avec paytrak.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "PayTrack",
+    title: "paytrak",
   },
   icons: {
     icon: "/icon-192.png",
