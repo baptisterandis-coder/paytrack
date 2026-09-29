@@ -1,4 +1,4 @@
-# PayTrack 🚀
+# paytrak 🚀
 
 Dashboard de suivi de bulletins de paie avec gamification.
 
