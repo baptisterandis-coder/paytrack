@@ -1,6 +1,6 @@
 {
-  "name": "PayTrack",
-  "short_name": "PayTrack",
+  "name": "paytrak",
+  "short_name": "paytrak",
   "description": "Suivi et analyse de vos bulletins de paie",
   "start_url": "/",
   "display": "standalone",
