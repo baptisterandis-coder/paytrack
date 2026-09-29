@@ -144,7 +144,7 @@ export default function DashboardPage() {
               className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
               onClick={() => setTab("dashboard")}
             >
-              PayTrack
+              paytrak
             </h1>
             <p className="text-muted-foreground text-xs sm:text-sm mt-1">Tableau de bord {currentYear}</p>
           </div>
