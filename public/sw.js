@@ -1,6 +1,6 @@
-// Service worker PayTrack — réseau d'abord, cache en repli (mode hors-ligne basique).
+// Service worker paytrak — réseau d'abord, cache en repli (mode hors-ligne basique).
 // Ne touche jamais aux appels /api/ ni au cross-origin (données toujours fraîches).
-const CACHE = "paytrack-v1";
+const CACHE = "paytrak-v1";
 
 self.addEventListener("install", () => self.skipWaiting());
 
