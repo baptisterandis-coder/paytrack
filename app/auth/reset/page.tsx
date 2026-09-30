@@ -40,6 +40,22 @@ export default function ResetPasswordPage() {
         setChecking(false);
         return;
       }
+      // Lien au format "token_hash" (?token_hash=...&type=recovery) : fonctionne depuis n'importe quel appareil
+      const tokenHash = url.searchParams.get("token_hash");
+      const otpType = url.searchParams.get("type");
+      if (tokenHash && otpType) {
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: otpType as "recovery" | "email" | "signup" | "invite" | "magiclink" | "email_change",
+        });
+        if (!active) return;
+        if (error) {
+          setLinkError(expired);
+          setChecking(false);
+          return;
+        }
+        window.history.replaceState(null, "", "/auth/reset");
+      }
       // Lien au format "code" (?code=...) : on l'échange contre une session
       const code = url.searchParams.get("code");
       if (code) {
