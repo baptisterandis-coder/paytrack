@@ -9,9 +9,9 @@ export interface PodiumRow {
 }
 
 const PODIUM_STYLES = [
-  { icon: <Trophy className="w-5 h-5" />, bg: "bg-warning/10 text-warning", label: "1er" },
-  { icon: <Medal className="w-5 h-5" />, bg: "bg-muted/30 text-muted-foreground", label: "2ème" },
-  { icon: <Medal className="w-5 h-5" />, bg: "bg-accent/10 text-accent", label: "3ème" },
+  { icon: <Trophy className="w-5 h-5" />, bg: "bg-primary/20 text-primary", label: "1er" },
+  { icon: <Medal className="w-5 h-5" />, bg: "bg-primary/10 text-primary/70", label: "2ème" },
+  { icon: <Medal className="w-5 h-5" />, bg: "bg-secondary text-muted-foreground", label: "3ème" },
 ];
 
 export function PodiumModal({ open, onOpenChange, title, rows, emptyMessage }: {
