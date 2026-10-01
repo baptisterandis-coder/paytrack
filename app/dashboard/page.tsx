@@ -16,6 +16,7 @@ import { PayslipFeed } from "@/components/dashboard/PayslipFeed";
 import { Goals } from "@/components/dashboard/Goals";
 import { AchievementBadges } from "@/components/dashboard/AchievementBadges";
 import { TrophyGallery } from "@/components/dashboard/TrophyGallery";
+import { Lexique } from "@/components/dashboard/Lexique";
 import { UploadPayslip } from "@/components/dashboard/UploadPayslip";
 import { ProfileModal } from "@/components/dashboard/ProfileModal";
 import { Logo } from "@/components/Logo";
@@ -179,12 +180,13 @@ export default function DashboardPage() {
         </header>
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-6">
-          <TabsList ref={tabsListRef} className="flex justify-start sm:grid sm:grid-cols-5">
+          <TabsList ref={tabsListRef} className="flex justify-start sm:grid sm:grid-cols-6">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="payslips">Bulletins</TabsTrigger>
             <TabsTrigger value="goals">Objectifs</TabsTrigger>
             <TabsTrigger value="achievements">Achievements</TabsTrigger>
             <TabsTrigger value="trophies">Trophées</TabsTrigger>
+              <TabsTrigger value="lexique">Comprendre</TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -352,6 +354,7 @@ export default function DashboardPage() {
             <div className="flex-[0_0_100%] min-w-0"><Goals /></div>
             <div className="flex-[0_0_100%] min-w-0"><AchievementBadges /></div>
             <div className="flex-[0_0_100%] min-w-0"><TrophyGallery /></div>
+            <div className="flex-[0_0_100%] min-w-0"><Lexique /></div>
           </div>
         </div>
       </div>
