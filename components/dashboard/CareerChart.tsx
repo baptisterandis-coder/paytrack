@@ -64,16 +64,16 @@ export function CareerChart({ payslips, birthDate }: CareerChartProps) {
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 3.7% 15.9%)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(219 55% 28%)" />
           <XAxis
             dataKey="age"
-            stroke="hsl(240 5% 64.9%)"
+            stroke="hsl(219 30% 68%)"
             fontSize={12}
             tickLine={false}
             tickFormatter={v => `${v} ans`}
           />
           <YAxis
-            stroke="hsl(240 5% 64.9%)"
+            stroke="hsl(219 30% 68%)"
             fontSize={12}
             tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
             tickLine={false}
@@ -84,7 +84,7 @@ export function CareerChart({ payslips, birthDate }: CareerChartProps) {
             {data.map((entry, index) => (
               <Cell
                 key={index}
-                fill={entry.brut === maxBrut ? "hsl(45 93% 58%)" : "hsl(217 91% 60%)"}
+                fill={entry.brut === maxBrut ? "hsl(18 87% 53%)" : "hsl(219 45% 48%)"}
               />
             ))}
           </Bar>
