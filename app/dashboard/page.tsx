@@ -18,6 +18,7 @@ import { AchievementBadges } from "@/components/dashboard/AchievementBadges";
 import { TrophyGallery } from "@/components/dashboard/TrophyGallery";
 import { UploadPayslip } from "@/components/dashboard/UploadPayslip";
 import { ProfileModal } from "@/components/dashboard/ProfileModal";
+import { Logo } from "@/components/Logo";
 import { usePayslips } from "@/hooks/usePayslips";
 import { useGoals } from "@/hooks/useGoals";
 import { useProfile } from "@/hooks/useProfile";
@@ -140,12 +141,13 @@ export default function DashboardPage() {
 
         <header className="flex justify-between items-center gap-3 mb-8">
           <div className="min-w-0">
-            <h1
-              className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+            <button
               onClick={() => setTab("dashboard")}
+              className="hover:opacity-80 transition-opacity"
+              aria-label="Aller au tableau de bord"
             >
-              paytrak
-            </h1>
+              <Logo className="h-9 sm:h-11" />
+            </button>
             <p className="text-muted-foreground text-xs sm:text-sm mt-1">Tableau de bord {currentYear}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
