@@ -12,26 +12,26 @@ import useEmblaCarousel from "embla-carousel-react";
 import AutoHeight from "embla-carousel-auto-height";
 
 const MONTHLY_TROPHY_DEFS = [
-  { id: "2k",  title: "Premier 2K",  label: "2K",  color: "bg-primary/10 text-primary",  threshold: 2000  },
-  { id: "5k",  title: "Premier 5K",  label: "5K",  color: "bg-warning/10 text-warning",  threshold: 5000  },
-  { id: "10k", title: "Premier 10K", label: "10K", color: "bg-success/10 text-success",  threshold: 10000 },
-  { id: "15k", title: "Premier 15K", label: "15K", color: "bg-accent/10 text-accent",    threshold: 15000 },
+  { id: "2k",  title: "Premier 2K",  label: "2K",  color: "bg-secondary text-muted-foreground",  threshold: 2000  },
+  { id: "5k",  title: "Premier 5K",  label: "5K",  color: "bg-primary/10 text-primary/70",  threshold: 5000  },
+  { id: "10k", title: "Premier 10K", label: "10K", color: "bg-primary/15 text-primary",  threshold: 10000 },
+  { id: "15k", title: "Premier 15K", label: "15K", color: "bg-primary/25 text-primary",    threshold: 15000 },
 ];
 
 const CUMUL_TROPHY_DEFS = [
-  { id: "cumul-50k",  title: "Cumul 50K",  label: "50K",  color: "bg-primary/10 text-primary", threshold: 50000   },
-  { id: "cumul-100k", title: "Cumul 100K", label: "100K", color: "bg-warning/10 text-warning", threshold: 100000  },
-  { id: "cumul-250k", title: "Cumul 250K", label: "250K", color: "bg-success/10 text-success", threshold: 250000  },
-  { id: "cumul-500k", title: "Cumul 500K", label: "500K", color: "bg-accent/10 text-accent",   threshold: 500000  },
-  { id: "cumul-1m",   title: "Cumul 1M€",  label: "1M",   color: "bg-warning/10 text-warning", threshold: 1000000 },
+  { id: "cumul-50k",  title: "Cumul 50K",  label: "50K",  color: "bg-secondary text-muted-foreground", threshold: 50000   },
+  { id: "cumul-100k", title: "Cumul 100K", label: "100K", color: "bg-primary/10 text-primary/70", threshold: 100000  },
+  { id: "cumul-250k", title: "Cumul 250K", label: "250K", color: "bg-primary/15 text-primary", threshold: 250000  },
+  { id: "cumul-500k", title: "Cumul 500K", label: "500K", color: "bg-primary/25 text-primary",   threshold: 500000  },
+  { id: "cumul-1m",   title: "Cumul 1M€",  label: "1M",   color: "bg-white/10 text-white", threshold: 1000000 },
 ];
 
 const STREAK_TROPHY_DEFS = [
-  { id: "streak-12",  title: "12 Mois",  label: "12M",  color: "bg-primary/10 text-primary", months: 12  },
-  { id: "streak-24",  title: "24 Mois",  label: "24M",  color: "bg-warning/10 text-warning", months: 24  },
-  { id: "streak-36",  title: "36 Mois",  label: "36M",  color: "bg-success/10 text-success", months: 36  },
-  { id: "streak-60",  title: "60 Mois",  label: "60M",  color: "bg-accent/10 text-accent",   months: 60  },
-  { id: "streak-120", title: "120 Mois", label: "120M", color: "bg-warning/10 text-warning", months: 120 },
+  { id: "streak-12",  title: "12 Mois",  label: "12M",  color: "bg-secondary text-muted-foreground", months: 12  },
+  { id: "streak-24",  title: "24 Mois",  label: "24M",  color: "bg-primary/10 text-primary/70", months: 24  },
+  { id: "streak-36",  title: "36 Mois",  label: "36M",  color: "bg-primary/15 text-primary", months: 36  },
+  { id: "streak-60",  title: "60 Mois",  label: "60M",  color: "bg-primary/25 text-primary",   months: 60  },
+  { id: "streak-120", title: "120 Mois", label: "120M", color: "bg-white/10 text-white", months: 120 },
 ];
 
 type Filter = "all" | "unlocked" | "locked";
