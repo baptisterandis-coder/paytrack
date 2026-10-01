@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Logo } from "@/components/Logo";
 import { TrendingUp, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 
 export default function AuthPage() {
@@ -92,12 +93,7 @@ export default function AuthPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-primary shadow-primary mb-4">
-            <TrendingUp className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
-            paytrak
-          </h1>
+          <Logo className="h-12 mx-auto" />
           <p className="text-muted-foreground mt-1 text-sm">Suivez l'évolution de vos revenus</p>
         </div>
 
