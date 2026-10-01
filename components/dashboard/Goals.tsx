@@ -105,7 +105,7 @@ export function Goals() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><TrendingUp className="w-5 h-5 text-primary" /><CardTitle>Objectif Annuel Brut</CardTitle></div>
-              <Button variant="ghost" size="icon" onClick={() => setModal("top-years")} className="text-warning hover:text-warning hover:bg-warning/10"><Trophy className="w-4 h-4" /></Button>
+              <Button variant="ghost" size="icon" onClick={() => setModal("top-years")} className="text-primary hover:text-primary hover:bg-primary/10"><Trophy className="w-4 h-4" /></Button>
             </div>
             <CardDescription>Objectif brut pour {currentYear}</CardDescription>
           </CardHeader>
@@ -129,9 +129,9 @@ export function Goals() {
                   </span>
                 </div>
                 <div className="relative h-8 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-warning transition-all duration-500 flex items-center justify-center rounded-full"
+                  <div className="h-full bg-primary transition-all duration-500 flex items-center justify-center rounded-full"
                     style={{ width: `${Math.min(overallProgress, 100)}%` }}>
-                    {overallProgress > 8 && <span className="text-xs font-bold text-warning-foreground">{overallProgress.toFixed(0)}%</span>}
+                    {overallProgress > 8 && <span className="text-xs font-bold text-primary-foreground">{overallProgress.toFixed(0)}%</span>}
                   </div>
                 </div>
                 <div className="flex justify-end">
@@ -153,8 +153,8 @@ export function Goals() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><Target className="w-5 h-5 text-success" /><CardTitle>Objectif Mensuel Moyen</CardTitle></div>
-              <Button variant="ghost" size="icon" onClick={() => setModal("top-salaries")} className="text-warning hover:text-warning hover:bg-warning/10"><Trophy className="w-4 h-4" /></Button>
+              <div className="flex items-center gap-2"><Target className="w-5 h-5 text-primary" /><CardTitle>Objectif Mensuel Moyen</CardTitle></div>
+              <Button variant="ghost" size="icon" onClick={() => setModal("top-salaries")} className="text-primary hover:text-primary hover:bg-primary/10"><Trophy className="w-4 h-4" /></Button>
             </div>
             <CardDescription>Moyenne brute sur les {bulletinCount} bulletins {currentYear}</CardDescription>
           </CardHeader>
@@ -176,13 +176,13 @@ export function Goals() {
                   </span>
                 </div>
                 <div className="relative h-8 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-success transition-all duration-500 flex items-center justify-center rounded-full"
+                  <div className="h-full bg-primary transition-all duration-500 flex items-center justify-center rounded-full"
                     style={{ width: `${monthlyProgress}%` }}>
-                    {monthlyProgress > 10 && <span className="text-xs font-bold text-success-foreground">{monthlyProgress.toFixed(0)}%</span>}
+                    {monthlyProgress > 10 && <span className="text-xs font-bold text-primary-foreground">{monthlyProgress.toFixed(0)}%</span>}
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-success hover:bg-success/10"
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-success hover:bg-primary/10"
                     onClick={() => { setMonthlyTarget(monthlyGoal.target_amount.toString()); setEditingMonthly(true); }}>
                     <Pencil className="w-3.5 h-3.5" />
                   </Button>
@@ -190,7 +190,7 @@ export function Goals() {
               </div>
             ) : (
               <GoalForm label="Objectif mensuel moyen (€)" placeholder="Ex : 7 000" value={monthlyTarget} onChange={setMonthlyTarget}
-                onSubmit={handleMonthly} editing={editingMonthly} btnClass="bg-gradient-success shadow-success"
+                onSubmit={handleMonthly} editing={editingMonthly} btnClass="bg-gradient-primary shadow-primary"
                 onCancel={() => { setMonthlyTarget(""); setEditingMonthly(false); }}
                 onDelete={() => { if (monthlyGoal) { deleteGoal(monthlyGoal.id); setEditingMonthly(false); } }} />
             )}
@@ -198,7 +198,7 @@ export function Goals() {
         </Card>
       </div>
 
-      <PodiumModal open={modal === "top-salaries"} onOpenChange={v => !v && setModal(null)} title={<><Trophy className="w-5 h-5 text-warning" /> Top 3 Salaires Bruts</>} rows={topSalaryRows} emptyMessage="Aucun bulletin avec données complètes." />
+      <PodiumModal open={modal === "top-salaries"} onOpenChange={v => !v && setModal(null)} title={<><Trophy className="w-5 h-5 text-primary" /> Top 3 Salaires Bruts</>} rows={topSalaryRows} emptyMessage="Aucun bulletin avec données complètes." />
       <PodiumModal open={modal === "top-years"} onOpenChange={v => !v && setModal(null)} title={<><Target className="w-5 h-5 text-primary" /> Top 3 Années Record</>} rows={topYearRows} emptyMessage="Aucun bulletin avec données complètes." />
     </div>
   );
