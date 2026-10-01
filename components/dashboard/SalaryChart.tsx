@@ -47,13 +47,13 @@ export function SalaryChart({ data }: { data: MonthlyChartData[] }) {
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={displayData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 3.7% 15.9%)" />
-          <XAxis dataKey="month" stroke="hsl(240 5% 64.9%)" fontSize={12} tickLine={false} />
-          <YAxis stroke="hsl(240 5% 64.9%)" fontSize={12} tickFormatter={v => `${(v/1000).toFixed(0)}k`} tickLine={false} axisLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(219 55% 28%)" />
+          <XAxis dataKey="month" stroke="hsl(219 30% 68%)" fontSize={12} tickLine={false} />
+          <YAxis stroke="hsl(219 30% 68%)" fontSize={12} tickFormatter={v => `${(v/1000).toFixed(0)}k`} tickLine={false} axisLine={false} />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ paddingTop: "16px" }} iconType="circle" iconSize={8} />
-          <Bar dataKey="brutN1" fill="hsl(190 85% 50%)" name={`Brut ${cy - 1}`} radius={[3, 3, 0, 0]} />
-          <Bar dataKey="brut" fill="hsl(217 91% 60%)" name={`Brut ${cy}`} radius={[3, 3, 0, 0]} />
+          <Bar dataKey="brutN1" fill="hsl(219 45% 48%)" name={`Brut ${cy - 1}`} radius={[3, 3, 0, 0]} />
+          <Bar dataKey="brut" fill="hsl(18 87% 53%)" name={`Brut ${cy}`} radius={[3, 3, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
