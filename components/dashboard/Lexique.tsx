@@ -6,12 +6,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePayslips } from "@/hooks/usePayslips";
 import { FAMILLES, LEXIQUE, type FicheLexique } from "@/utils/lexique";
-import { formatCurrency, formatPeriod, resolveNetSalary } from "@/utils/salary";
+import { formatCurrency, formatPeriod, resolveNetSalary, type Payslip } from "@/utils/salary";
 
 // Valeurs tirées du dernier bulletin, affichées dans les fiches concernées.
 function montantPour(
   id: string,
-  p: { gross_salary?: number | null; net_salary?: number | null; net_after_tax?: number | null; charges?: number | null } | undefined
+  p: Payslip | undefined
 ): { montant: number; libelle: string } | null {
   if (!p) return null;
   const brut = p.gross_salary ?? 0;
