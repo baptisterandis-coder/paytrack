@@ -101,6 +101,7 @@ function usePayslipsState() {
           net_after_tax: extracted.net_salary ?? null,
           charges: extracted.charges ?? null,
           ai_comment: ai_comment ?? null,
+          lignes: extracted.lignes ?? null,
           processed: true,
           processing_status: "completed",
         }).eq("id", inserted.id);
