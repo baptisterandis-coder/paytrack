@@ -27,7 +27,7 @@ import { formatCurrency, resolveNetSalary, generateMonthlyData, buildYearlyTotal
 import useEmblaCarousel from "embla-carousel-react";
 import AutoHeight from "embla-carousel-auto-height";
 
-const TAB_ORDER = ["dashboard", "payslips", "goals", "achievements", "trophies"];
+const TAB_ORDER = ["dashboard", "payslips", "goals", "achievements", "trophies", "lexique"];
 
 export default function DashboardPage() {
   const router = useRouter();
