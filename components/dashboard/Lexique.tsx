@@ -5,44 +5,84 @@ import { Search, ChevronDown, ChevronUp, BookOpen } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePayslips } from "@/hooks/usePayslips";
-import { FAMILLES, LEXIQUE, type FicheLexique } from "@/utils/lexique";
+import { FAMILLES, LEXIQUE, trouverFiche, type FicheLexique } from "@/utils/lexique";
 import { formatCurrency, formatPeriod, resolveNetSalary, type Payslip } from "@/utils/salary";
 
-// Valeurs tirées du dernier bulletin, affichées dans les fiches concernées.
-function montantPour(
-  id: string,
-  p: Payslip | undefined
-): { montant: number; libelle: string } | null {
-  if (!p) return null;
-  const brut = p.gross_salary ?? 0;
-  const net = resolveNetSalary(p);
-  const impot = p.charges ?? 0;
-  switch (id) {
-    case "remuneration-brute":
-      return brut ? { montant: brut, libelle: "ta rémunération brute" } : null;
-    case "net-a-payer":
-      return net ? { montant: net, libelle: "ton net à payer" } : null;
-    case "pas":
-      return impot ? { montant: impot, libelle: "ton impôt prélevé" } : null;
-    default:
-      return null;
+interface LigneBulletin {
+  libelle?: string | null;
+  montant_salarial?: number | null;
+  montant_patronal?: number | null;
+  taux_salarial?: number | null;
+}
+
+interface Chiffres {
+  mois: number;        // montant sur le dernier bulletin
+  cumul: number;       // total sur tous les bulletins détaillés
+  nbBulletins: number; // nombre de bulletins pris en compte
+  patronalMois?: number;
+}
+
+// Associe chaque fiche du lexique aux montants réels de l'utilisateur.
+function calculerChiffres(payslips: Payslip[], dernier: Payslip | undefined): Record<string, Chiffres> {
+  const res: Record<string, Chiffres> = {};
+
+  const ajouter = (id: string, montant: number, estDernier: boolean, patronal?: number) => {
+    if (!montant) return;
+    const c = (res[id] ??= { mois: 0, cumul: 0, nbBulletins: 0 });
+    c.cumul += montant;
+    if (estDernier) {
+      c.mois += montant;
+      if (patronal) c.patronalMois = (c.patronalMois ?? 0) + patronal;
+    }
+  };
+
+  const avecDetail = new Set<string>();
+
+  for (const p of payslips) {
+    const lignes = (p as unknown as { lignes?: LigneBulletin[] }).lignes;
+    const estDernier = !!dernier && p.id === dernier.id;
+
+    // Totaux toujours disponibles
+    if (p.gross_salary) ajouter("remuneration-brute", p.gross_salary, estDernier);
+    const net = resolveNetSalary(p);
+    if (net) ajouter("net-a-payer", net, estDernier);
+
+    if (!Array.isArray(lignes) || lignes.length === 0) continue;
+    avecDetail.add(p.id);
+
+    for (const l of lignes) {
+      const fiche = trouverFiche(l.libelle ?? "");
+      if (!fiche) continue;
+      const sal = Math.abs(Number(l.montant_salarial) || 0);
+      const pat = Math.abs(Number(l.montant_patronal) || 0);
+      if (sal) ajouter(fiche.id, sal, estDernier, pat);
+      else if (pat && !sal) {
+        // Ligne payée uniquement par l'employeur : on affiche sa part patronale
+        const c = (res[fiche.id] ??= { mois: 0, cumul: 0, nbBulletins: 0 });
+        if (estDernier) c.patronalMois = (c.patronalMois ?? 0) + pat;
+      }
+    }
   }
+
+  const nb = avecDetail.size;
+  Object.values(res).forEach((c) => (c.nbBulletins = nb));
+  return res;
 }
 
 function Fiche({
   fiche,
   ouverte,
   onToggle,
-  chiffre,
+  chiffres,
   brut,
 }: {
   fiche: FicheLexique;
   ouverte: boolean;
   onToggle: () => void;
-  chiffre: { montant: number; libelle: string } | null;
+  chiffres: Chiffres | undefined;
   brut: number;
 }) {
-  const part = chiffre && brut ? (chiffre.montant / brut) * 100 : null;
+  const part = chiffres?.mois && brut ? (chiffres.mois / brut) * 100 : null;
 
   return (
     <div className="border-b border-border/40 last:border-0">
@@ -55,9 +95,9 @@ function Fiche({
           <p className="text-sm text-muted-foreground mt-0.5">{fiche.resume}</p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 pt-0.5">
-          {chiffre && (
+          {chiffres && chiffres.mois > 0 && (
             <span className="text-sm font-bold text-primary whitespace-nowrap">
-              {formatCurrency(chiffre.montant)}
+              {formatCurrency(chiffres.mois)}
             </span>
           )}
           {ouverte ? (
@@ -72,16 +112,28 @@ function Fiche({
         <div className="pb-5 space-y-3 text-sm leading-relaxed">
           <p className="text-foreground/90">{fiche.explication}</p>
 
-          {chiffre && (
-            <div className="bg-primary/10 rounded-xl p-3">
-              <p className="text-foreground">
-                Sur ton dernier bulletin, {chiffre.libelle} s'élève à{" "}
-                <strong className="text-primary">{formatCurrency(chiffre.montant)}</strong>
-                {part !== null && part > 0 && part < 200 && (
-                  <> , soit {part.toFixed(1).replace(".", ",")} % de ton brut</>
-                )}
-                .
-              </p>
+          {chiffres && (chiffres.mois > 0 || (chiffres.patronalMois ?? 0) > 0) && (
+            <div className="bg-primary/10 rounded-xl p-3 space-y-1.5">
+              {chiffres.mois > 0 && (
+                <p className="text-foreground">
+                  Sur ton dernier bulletin :{" "}
+                  <strong className="text-primary">{formatCurrency(chiffres.mois)}</strong>
+                  {part !== null && part > 0 && part < 200 && (
+                    <> , soit {part.toFixed(1).replace(".", ",")}&#8239;% de ton brut</>
+                  )}
+                </p>
+              )}
+              {(chiffres.patronalMois ?? 0) > 0 && (
+                <p className="text-muted-foreground text-[13px]">
+                  Part payée par ton employeur : {formatCurrency(chiffres.patronalMois ?? 0)}
+                </p>
+              )}
+              {chiffres.cumul > chiffres.mois && chiffres.nbBulletins > 1 && (
+                <p className="text-foreground/90 pt-1 border-t border-primary/20">
+                  Cumul sur tes {chiffres.nbBulletins} derniers bulletins :{" "}
+                  <strong className="text-primary">{formatCurrency(chiffres.cumul)}</strong>
+                </p>
+              )}
             </div>
           )}
 
@@ -134,6 +186,8 @@ export function Lexique() {
     );
   }, [recherche]);
 
+  const chiffres = useMemo(() => calculerChiffres(payslips, dernier), [payslips, dernier]);
+
   const brut = dernier?.gross_salary ?? 0;
 
   return (
@@ -181,7 +235,7 @@ export function Lexique() {
               fiche={f}
               ouverte={ouverte === f.id}
               onToggle={() => setOuverte(ouverte === f.id ? null : f.id)}
-              chiffre={montantPour(f.id, dernier)}
+              chiffres={chiffres[f.id]}
               brut={brut}
             />
           ))}
@@ -205,7 +259,7 @@ export function Lexique() {
                       fiche={f}
                       ouverte={ouverte === f.id}
                       onToggle={() => setOuverte(ouverte === f.id ? null : f.id)}
-                      chiffre={montantPour(f.id, dernier)}
+                      chiffres={chiffres[f.id]}
                       brut={brut}
                     />
                   ))}
