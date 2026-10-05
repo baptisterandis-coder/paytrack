@@ -32,8 +32,8 @@ function usePayslipsState() {
   const extractPayslipData = async (filePath: string, fileType: string, previousPayslip?: Payslip | null) => {
     try {
       const { data } = await supabase.storage.from("payslips").download(filePath);
-      if (!data) return null;
-      if (!fileType.includes("pdf")) return null;
+      if (!data) { console.error("[paytrak] telechargement du PDF impossible"); return null; }
+      if (!fileType.includes("pdf")) { console.error("[paytrak] type de fichier non PDF:", fileType); return null; }
       const buffer = await data.arrayBuffer();
       const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
       const { data: fnData, error: fnError } = await supabase.functions.invoke("extract-payslip", {
@@ -49,11 +49,13 @@ function usePayslipsState() {
           } : null,
         },
       });
-      if (fnError) throw fnError;
+      if (fnError) { console.error("[paytrak] erreur fonction:", fnError); throw fnError; }
       if (fnData?.success) return { data: fnData.data, ai_comment: fnData.ai_comment };
+      console.error("[paytrak] reponse sans succes:", fnData);
       return null;
     } catch (e) {
-      console.error("Extraction error:", e);
+      console.error("[paytrak] Extraction error:", e);
+      if (typeof window !== "undefined") (window as any).__paytrakErr = String(e);
       return null;
     }
   };
