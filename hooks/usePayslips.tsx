@@ -92,8 +92,17 @@ function usePayslipsState() {
         now.getFullYear()
       );
       const result = await extractPayslipData(path, file.type, previousPayslip);
-      if (result) {
-        const { data: extracted, ai_comment } = result;
+      const lisible = !!(result && result.data && result.data.period_month && result.data.period_year && result.data.gross_salary);
+      if (!lisible) {
+        // Analyse échouée ou bulletin illisible : on retire la ligne vide créée plus haut
+        // (sinon elle reste en base, vide et datée d'aujourd'hui).
+        await supabase.from("payslips").delete().eq("id", inserted.id);
+        await supabase.storage.from("payslips").remove([path]);
+        await fetch();
+        throw new Error("L'analyse de « " + file.name + " » a échoué : le bulletin n'a pas été enregistré. Réessaie dans un instant.");
+      }
+      {
+        const { data: extracted, ai_comment } = result!;
         await supabase.from("payslips").update({
           period_month: extracted.period_month ?? now.getMonth() + 1,
           period_year: extracted.period_year ?? now.getFullYear(),
