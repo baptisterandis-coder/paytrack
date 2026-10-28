@@ -29,7 +29,7 @@ function usePayslipsState() {
     }
   }, []);
 
-  const extractPayslipData = async (filePath: string, fileType: string, previousPayslip?: Payslip | null) => {
+  const extractPayslipData = async (filePath: string, fileType: string, previousPayslip?: Payslip | null, historique: Payslip[] = []) => {
     try {
       const { data } = await supabase.storage.from("payslips").download(filePath);
       if (!data) { console.error("[paytrak] telechargement du PDF impossible"); return null; }
@@ -47,6 +47,14 @@ function usePayslipsState() {
             charges: previousPayslip.charges,
             ai_comment: previousPayslip.ai_comment,
           } : null,
+          payslips: historique.map((p) => ({
+            period_month: p.period_month,
+            period_year: p.period_year,
+            gross_salary: p.gross_salary,
+            net_salary: p.net_salary,
+            charges: p.charges,
+            ai_comment: p.ai_comment,
+          })),
         },
       });
       if (fnError) { console.error("[paytrak] erreur fonction:", fnError); throw fnError; }
@@ -91,7 +99,8 @@ function usePayslipsState() {
         now.getMonth() + 1,
         now.getFullYear()
       );
-      const result = await extractPayslipData(path, file.type, previousPayslip);
+      const historique = (allPayslips ?? []).filter((p) => p.id !== inserted.id && p.gross_salary);
+      const result = await extractPayslipData(path, file.type, previousPayslip, historique);
       const lisible = !!(result && result.data && result.data.period_month && result.data.period_year && result.data.gross_salary);
       if (!lisible) {
         // Analyse échouée ou bulletin illisible : on retire la ligne vide créée plus haut
