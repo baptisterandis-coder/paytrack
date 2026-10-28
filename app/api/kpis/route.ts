@@ -36,7 +36,7 @@ async function fetchSmic(): Promise<{ monthly: number; since: Date } | null> {
   try {
     const res = await fetch(
       "https://api.fr.openfisca.org/latest/parameter/marche_travail.salaire_minimum.smic.smic_b_horaire",
-      { next: { revalidate } }
+      { next: { revalidate }, signal: AbortSignal.timeout(4000) }
     );
     if (!res.ok) return null;
     const json = await res.json();
@@ -64,7 +64,7 @@ async function fetchEurostatLatest(
     const qs = new URLSearchParams({ format: "JSON", lang: "EN", geo: "FR", ...params });
     const res = await fetch(
       `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${dataset}?${qs}`,
-      { next: { revalidate } }
+      { next: { revalidate }, signal: AbortSignal.timeout(4000) }
     );
     if (!res.ok) return null;
     const json = await res.json();
@@ -113,18 +113,18 @@ export async function GET() {
   // Plausibilité : si une source renvoie une valeur aberrante, on retombe
   // sur une valeur maintenue plutôt que d'afficher n'importe quoi.
   const inflationVal =
-    inflation && inflation.value > -5 && inflation.value < 30 ? inflation.value : 2.0;
+    inflation && inflation.value > -5 && inflation.value < 30 ? inflation.value : 3.4;
   const inflationLive = !!(inflation && inflation.value > -5 && inflation.value < 30);
   const chomageVal =
-    chomage && chomage.value > 0 && chomage.value < 30 ? chomage.value : 7.9;
+    chomage && chomage.value > 0 && chomage.value < 30 ? chomage.value : 8.2;
   const chomageLive = !!(chomage && chomage.value > 0 && chomage.value < 30);
 
   const kpis: Kpi[] = [
     {
       key: "smic",
       label: "SMIC brut mensuel",
-      value: smic ? eur(smic.monthly) : "1 823,07 €",
-      sub: smic ? `depuis ${monthYear(smic.since)}` : "depuis janv. 2026",
+      value: smic ? eur(smic.monthly) : "1 867,06 €",
+      sub: smic ? `depuis ${monthYear(smic.since)}` : "depuis juin 2026",
       alert: false,
       source: smic ? "live" : "manuel",
     },
