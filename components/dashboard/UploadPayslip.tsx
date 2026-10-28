@@ -13,6 +13,7 @@ export function UploadPayslip() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [done, setDone] = useState(false);
+  const [erreur, setErreur] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const { uploadPayslip } = usePayslips();
 
@@ -31,14 +32,19 @@ export function UploadPayslip() {
   const handleUpload = async () => {
     if (!files.length) return;
     setUploading(true);
+    setErreur("");
     setProgress({ current: 0, total: files.length });
+    let i = 0;
     try {
-      for (let i = 0; i < files.length; i++) {
+      for (i = 0; i < files.length; i++) {
         await uploadPayslip(files[i]);
         setProgress({ current: i + 1, total: files.length });
       }
       setDone(true);
       setTimeout(() => { setOpen(false); setFiles([]); setDone(false); }, 1500);
+    } catch (e) {
+      setErreur(e instanceof Error ? e.message : "Une erreur est survenue pendant l'envoi.");
+      setFiles((prev) => prev.slice(i));
     } finally {
       setUploading(false);
     }
@@ -64,7 +70,7 @@ export function UploadPayslip() {
             <div className="py-8 text-center">
               <CheckCircle className="w-14 h-14 text-success mx-auto mb-3" />
               <p className="font-semibold text-foreground">Bulletins ajoutés !</p>
-              <p className="text-sm text-muted-foreground mt-1">Les données seront à saisir manuellement.</p>
+              <p className="text-sm text-muted-foreground mt-1">Les PDF sont analysés automatiquement ; les images sont à compléter manuellement.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -96,13 +102,17 @@ export function UploadPayslip() {
                 </div>
               )}
 
+              {erreur && (
+                <p className="text-danger text-sm bg-danger/10 px-3 py-2 rounded-lg">{erreur}</p>
+              )}
+
               {uploading && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Upload en cours…</span>
+                    <span>Analyse du bulletin en cours, environ 25 secondes…</span>
                     <span>{progress.current}/{progress.total}</span>
                   </div>
-                  <Progress value={(progress.current / progress.total) * 100} />
+                  <Progress className="animate-pulse" value={(progress.current / progress.total) * 100} />
                 </div>
               )}
 
