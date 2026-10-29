@@ -125,7 +125,7 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="02" verbe="Suis" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton salaire a-t-il battu l'inflation ?"}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton salaire a-t-il battu l'inflation ?"}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
                   "Difficile de le voir bulletin par bulletin. paytrak le calcule pour toi, en euros constants, avec l'inflation officielle."
@@ -213,7 +213,7 @@ export default async function Home() {
         </section>
 
         <section className="max-w-3xl mx-auto px-5 py-20 text-center">
-          <h2 className="text-2xl sm:text-4xl font-bold">{"Ta carrière mérite mieux qu'un dossier de PDF"}</h2>
+          <h2 className="text-2xl sm:text-4xl font-bold">{"Ta carrière mérite mieux qu'un dossier de PDF"}</h2>
           <div className="mt-8">
             <Link href="/auth" className={BOUTON_PRINCIPAL + " inline-block px-8 py-3.5"}>
               Voir ma progression
