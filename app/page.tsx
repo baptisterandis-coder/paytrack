@@ -1,60 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Euro, Lock, MapPin, BookOpen, Sparkles, Trophy, TrendingUp, Upload, Wallet } from "lucide-react";
+import { Lock, MapPin, Sparkles, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
 
 export const metadata: Metadata = {
-  title: "paytrak — Ta carrière, bulletin après bulletin",
+  title: "paytrak — Comprends. Suis. Progresse.",
   description:
-    "Suis l'évolution de ton salaire, compare-la à l'inflation et comprends chaque ligne de ta fiche de paie.",
+    "Ta fiche de paie enfin lisible, ton vrai gain une fois l'inflation déduite, tes records à battre.",
 };
 
-const ETAPES = [
-  {
-    icon: Upload,
-    titre: "Ajoute tes fiches de paie",
-    texte:
-      "Glisse tes bulletins en PDF. paytrak lit le brut, le net, l'impôt et chaque ligne de cotisation, sans rien à saisir. L'analyse prend environ 25 secondes par bulletin.",
-  },
-  {
-    icon: TrendingUp,
-    titre: "Suis ta progression",
-    texte:
-      "Évolution mois par mois, comparaison avec l'année précédente, croissance annuelle moyenne, objectifs à atteindre et trophées à débloquer.",
-  },
-  {
-    icon: BookOpen,
-    titre: "Comprends ta paie",
-    texte:
-      "Chaque ligne de ton bulletin expliquée en français simple, avec tes montants réels et leur cumul sur l'ensemble de tes bulletins.",
-  },
-];
+const BOUTON_PRINCIPAL =
+  "bg-gradient-primary shadow-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-opacity";
+const CARTE = "bg-gradient-card border border-border/50 rounded-2xl shadow-card";
+const SECTION = "max-w-6xl mx-auto px-5 py-16 md:py-24";
+const GRILLE = "grid md:grid-cols-2 gap-10 md:gap-16 items-center";
 
-const ATOUTS = [
-  {
-    icon: Wallet,
-    titre: "Ton pouvoir d'achat réel",
-    texte:
-      "Ton salaire a-t-il progressé plus vite que les prix ? paytrak compare ton évolution à l'inflation officielle (Eurostat).",
-  },
-  {
-    icon: Sparkles,
-    titre: "Un commentaire à chaque bulletin",
-    texte: "À chaque nouveau bulletin, un résumé des écarts avec le mois précédent : brut, net et impôt.",
-  },
-  {
-    icon: Trophy,
-    titre: "Objectifs et trophées",
-    texte: "Fixe-toi un objectif annuel ou mensuel, et débloque des trophées au fil de ta carrière.",
-  },
-  {
-    icon: Euro,
-    titre: "Les repères du moment",
-    texte: "SMIC, inflation, chômage, Livret A et salaire médian, toujours sous les yeux.",
-  },
-];
+const LIGNES_EXEMPLES = ["CSG déductible", "Retraite complémentaire", "Prévoyance", "Net social"];
+const TROPHEES = ["Premier 5K", "24 mois sans trou", "100 000 € cumulés"];
 
 const GARANTIES = [
   {
@@ -71,8 +35,11 @@ const GARANTIES = [
   },
 ];
 
-const BOUTON_PRINCIPAL =
-  "bg-gradient-primary shadow-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-opacity";
+function Etiquette({ numero, verbe }: { numero: string; verbe: string }) {
+  return (
+    <p className="text-sm font-bold tracking-widest uppercase text-primary mb-3">{numero + " · " + verbe}</p>
+  );
+}
 
 export default async function Home() {
   const supabase = await createClient();
@@ -87,7 +54,7 @@ export default async function Home() {
       <header className="sticky top-0 z-30 border-b border-border/40 bg-background/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <Link href="/" aria-label="paytrak, accueil">
-            <Logo className="h-9" />
+            <Logo className="h-10 sm:h-11" />
           </Link>
           <Link href="/auth" className={BOUTON_PRINCIPAL + " text-sm px-5 py-2.5"}>
             Connexion
@@ -96,23 +63,21 @@ export default async function Home() {
       </header>
 
       <main>
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-primary/10 blur-3xl"
-          />
-          <div className="relative max-w-3xl mx-auto px-5 pt-20 pb-24 text-center">
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight">
-              {"Ta carrière, bulletin après bulletin"}
+        <section className="relative bg-[radial-gradient(ellipse_at_top,rgba(240,96,30,0.14),transparent_65%)]">
+          <div className="max-w-3xl mx-auto px-5 pt-20 pb-24 sm:pt-28 sm:pb-32 text-center">
+            <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.05]">
+              <span className="block">Comprends.</span>
+              <span className="block">Suis.</span>
+              <span className="block text-primary">Progresse.</span>
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
+            <p className="mt-8 text-lg text-muted-foreground leading-relaxed">
               {
-                "paytrak suit l'évolution de ton salaire, te montre ce que tu gagnes vraiment une fois l'inflation déduite, et t'explique chaque ligne de ta fiche de paie."
+                "paytrak transforme tes fiches de paie en courbe de progression : ta paie enfin lisible, ton vrai gain une fois l'inflation déduite, tes records à battre."
               }
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/auth" className={BOUTON_PRINCIPAL + " px-8 py-3.5"}>
-                Se connecter
+                Voir ma progression
               </Link>
               <a
                 href="#fonctionnement"
@@ -124,38 +89,109 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="fonctionnement" className="max-w-6xl mx-auto px-5 py-16">
-          <h2 className="text-2xl sm:text-4xl font-bold text-center">{"Comment ça marche"}</h2>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {ETAPES.map((etape, i) => (
-              <div key={etape.titre} className="bg-gradient-card border border-border/50 rounded-2xl p-6 shadow-card">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
-                    <etape.icon className="w-5 h-5" />
+        <section id="fonctionnement" className={SECTION}>
+          <div className={GRILLE}>
+            <div>
+              <Etiquette numero="01" verbe="Comprends" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Enfin comprendre ta fiche de paie"}</h2>
+              <p className="mt-4 text-muted-foreground leading-relaxed">
+                {
+                  "« CSG déductible », « contribution d'équilibre technique »… Chaque ligne de ton bulletin expliquée en français simple, avec ton montant à toi."
+                }
+              </p>
+            </div>
+            <div className={CARTE + " p-6"}>
+              <p className="text-xs text-muted-foreground mb-3">{"Dans l'onglet Comprendre"}</p>
+              <div className="flex flex-wrap gap-2 mb-5">
+                {LIGNES_EXEMPLES.map((ligne) => (
+                  <span key={ligne} className="text-xs bg-secondary/70 rounded-full px-3 py-1.5">
+                    {ligne}
                   </span>
-                  <span className="text-sm font-bold text-muted-foreground">{"Étape " + (i + 1)}</span>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{etape.titre}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{etape.texte}</p>
+                ))}
               </div>
-            ))}
+              <div className="bg-primary/10 rounded-xl p-4">
+                <p className="font-semibold mb-1">{"CSG déductible"}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {
+                    "Une contribution qui finance la protection sociale, déduite de ton revenu imposable : tu paies donc un peu moins d'impôt grâce à elle."
+                  }
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="max-w-6xl mx-auto px-5 py-16">
-          <h2 className="text-2xl sm:text-4xl font-bold text-center">{"Ce que tu y trouves"}</h2>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2">
-            {ATOUTS.map((atout) => (
-              <div key={atout.titre} className="bg-gradient-card border border-border/50 rounded-2xl p-6 shadow-card flex gap-4">
-                <span className="w-10 h-10 shrink-0 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
-                  <atout.icon className="w-5 h-5" />
-                </span>
-                <div>
-                  <h3 className="text-lg font-semibold mb-1">{atout.titre}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{atout.texte}</p>
+        <section className={SECTION}>
+          <div className={GRILLE}>
+            <div>
+              <Etiquette numero="02" verbe="Suis" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton salaire a-t-il battu l'inflation ?"}</h2>
+              <p className="mt-4 text-muted-foreground leading-relaxed">
+                {
+                  "Difficile de le voir bulletin par bulletin. paytrak le calcule pour toi, en euros constants, avec l'inflation officielle."
+                }
+              </p>
+            </div>
+            <div className={CARTE + " p-6"}>
+              <p className="text-xs text-muted-foreground mb-4">{"Exemple · profil de démonstration, depuis 2021"}</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{"Ton salaire net"}</span>
+                  <span className="font-semibold">{"+67 %"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{"Les prix"}</span>
+                  <span className="font-semibold">{"+17 %"}</span>
                 </div>
               </div>
-            ))}
+              <div className="mt-4 pt-4 border-t border-border/50 flex items-baseline justify-between">
+                <span className="font-medium">{"Ton gain réel"}</span>
+                <span className="text-4xl font-extrabold text-primary">{"+42 %"}</span>
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
+                {
+                  "Soit +1 117 € par mois en euros constants. Calculé sur la moyenne du net mensuel de 2021 et celle des 12 derniers bulletins, avec l'inflation officielle (Eurostat)."
+                }
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className={SECTION}>
+          <div className={GRILLE}>
+            <div>
+              <Etiquette numero="03" verbe="Progresse" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Chaque palier se célèbre"}</h2>
+              <p className="mt-4 text-muted-foreground leading-relaxed">
+                {
+                  "Fixe-toi un objectif annuel ou mensuel, suis ton avance, et débloque des trophées au fil de ta carrière."
+                }
+              </p>
+            </div>
+            <div className={CARTE + " p-6"}>
+              <p className="text-xs text-muted-foreground mb-4">{"Exemple · profil de démonstration"}</p>
+              <div className="mb-5">
+                <div className="flex justify-between text-sm mb-2">
+                  <span>{"Objectif annuel 2026"}</span>
+                  <span className="font-semibold">{"70 %"}</span>
+                </div>
+                <div className="h-2.5 rounded-full bg-secondary overflow-hidden">
+                  <div className="h-full w-[70%] rounded-full bg-primary" />
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">{"45 500 € sur 65 000 € bruts"}</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {TROPHEES.map((trophee) => (
+                  <span
+                    key={trophee}
+                    className="text-xs rounded-full px-3 py-1.5 bg-primary/20 text-primary inline-flex items-center gap-1.5"
+                  >
+                    <Trophy className="w-3.5 h-3.5" />
+                    {trophee}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -177,10 +213,10 @@ export default async function Home() {
         </section>
 
         <section className="max-w-3xl mx-auto px-5 py-20 text-center">
-          <h2 className="text-2xl sm:text-4xl font-bold">{"Prêt à voir ta carrière en courbes ?"}</h2>
+          <h2 className="text-2xl sm:text-4xl font-bold">{"Ta carrière mérite mieux qu'un dossier de PDF"}</h2>
           <div className="mt-8">
             <Link href="/auth" className={BOUTON_PRINCIPAL + " inline-block px-8 py-3.5"}>
-              Se connecter
+              Voir ma progression
             </Link>
           </div>
         </section>
