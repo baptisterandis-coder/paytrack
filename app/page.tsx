@@ -70,10 +70,11 @@ export default async function Home() {
               <span className="block">Suis.</span>
               <span className="block text-primary">Progresse.</span>
             </h1>
-            <p className="mt-8 text-lg text-muted-foreground leading-relaxed">
-              {
-                "paytrak transforme tes fiches de paie en courbe de progression : ta paie enfin lisible, ton vrai gain une fois l'inflation déduite, tes records à battre."
-              }
+            <p className="mt-8 text-xl sm:text-2xl font-semibold text-foreground leading-snug">
+              {"Ta fiche de paie mérite mieux qu’un PDF oublié dans un dossier."}
+            </p>
+            <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
+              {"paytrak la lit, l’explique, la range, et transforme ta carrière en courbe de progression, avec des trophées à débloquer et des records à battre."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/auth" className={BOUTON_PRINCIPAL + " px-8 py-3.5"}>
