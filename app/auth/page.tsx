@@ -94,7 +94,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Logo className="h-16 sm:h-20 mx-auto" />
-          <p className="text-muted-foreground mt-1 text-sm">Suivez l'évolution de vos revenus</p>
+          <p className="text-muted-foreground mt-1 text-sm">Comprends. Suis. Progresse.</p>
         </div>
 
         <div className="bg-gradient-card border border-border/50 rounded-2xl p-8 shadow-card">
