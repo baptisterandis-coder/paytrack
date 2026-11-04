@@ -35,7 +35,7 @@ function Controle() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs text-muted-foreground">Exemple · profil de démonstration</p>
+        <p className="text-xs text-muted-foreground">Exemple</p>
         <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/15 rounded-full px-3 py-1">
           <CheckCircle2 className="w-3.5 h-3.5" />
           Contrôlé
@@ -66,7 +66,7 @@ function Controle() {
 function Cumul() {
   return (
     <div>
-      <p className="text-xs text-muted-foreground mb-4">Exemple · profil de démonstration</p>
+      <p className="text-xs text-muted-foreground mb-4">Exemple</p>
       <p className="font-semibold mb-3">CSG déductible</p>
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-xl bg-secondary/50 p-4">
