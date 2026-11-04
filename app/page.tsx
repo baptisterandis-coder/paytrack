@@ -126,32 +126,32 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="02" verbe="Suis" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton salaire a-t-il battu l'inflation ?"}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Toute ta carrière en une seule courbe"}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
-                  "Difficile de le voir bulletin par bulletin. paytrak le calcule pour toi, en euros constants, avec l'inflation officielle."
+                  "Chaque bulletin que tu déposes est rangé dans ton espace privé, en Europe, et vient prolonger ta courbe. Plus besoin de fouiller tes mails : tout ton historique est là, téléchargeable quand tu veux."
                 }
               </p>
             </div>
             <div className={CARTE + " p-6"}>
-              <p className="text-xs text-muted-foreground mb-4">{"Exemple · profil de démonstration, depuis 2021"}</p>
+              <p className="text-xs text-muted-foreground mb-4">{"Exemple · profil de démonstration"}</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{"Ton salaire net"}</span>
-                  <span className="font-semibold">{"+67 %"}</span>
+                  <span className="text-muted-foreground">{"Bulletins rangés"}</span>
+                  <span className="font-semibold">{"68"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{"Les prix"}</span>
-                  <span className="font-semibold">{"+17 %"}</span>
+                  <span className="text-muted-foreground">{"Premier bulletin"}</span>
+                  <span className="font-semibold">{"2021"}</span>
                 </div>
               </div>
               <div className="mt-4 pt-4 border-t border-border/50 flex items-baseline justify-between">
-                <span className="font-medium">{"Ton gain réel"}</span>
-                <span className="text-4xl font-extrabold text-primary">{"+42 %"}</span>
+                <span className="font-medium">{"Ton net depuis 2021"}</span>
+                <span className="text-4xl font-extrabold text-primary">{"+67 %"}</span>
               </div>
               <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
                 {
-                  "Soit +1 117 € par mois en euros constants. Calculé sur la moyenne du net mensuel de 2021 et celle des 12 derniers bulletins, avec l'inflation officielle (Eurostat)."
+                  "Ta courbe se met à jour à chaque nouveau bulletin, avec la comparaison au mois précédent."
                 }
               </p>
             </div>
