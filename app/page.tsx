@@ -81,10 +81,10 @@ export default async function Home() {
                 Voir ma progression
               </Link>
               <a
-                href="#fonctionnement"
+                href="#formules"
                 className="border border-border text-foreground font-medium rounded-xl px-8 py-3.5 hover:bg-secondary/60 transition-colors"
               >
-                {"Voir comment ça marche"}
+                {"Commencer gratuitement"}
               </a>
             </div>
           </div>
@@ -192,6 +192,38 @@ export default async function Home() {
                   </span>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="formules" className={SECTION}>
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Choisis ton niveau"}</h2>
+            <p className="mt-3 text-muted-foreground">{"Commence gratuitement. Les formules avancées arrivent bientôt."}</p>
+          </div>
+          <div className="mt-8 grid md:grid-cols-3 gap-4">
+            <div className={CARTE + " p-6 border-primary/60 flex flex-col"}>
+              <p className="text-xs font-semibold tracking-widest text-primary">{"GRATUIT"}</p>
+              <h3 className="mt-2 text-2xl font-bold">{"Découverte"}</h3>
+              <ul className="mt-4 space-y-2 text-sm text-muted-foreground flex-1">
+                <li>{"Tes bulletins rangés au même endroit"}</li>
+                <li>{"Lecture et explication de chaque ligne"}</li>
+                <li>{"Courbe de progression"}</li>
+                <li>{"Objectifs et trophées"}</li>
+              </ul>
+              <Link href="/auth" className={BOUTON_PRINCIPAL + " mt-6 px-6 py-3 text-center"}>
+                {"Commencer gratuitement"}
+              </Link>
+            </div>
+            <div className={CARTE + " p-6 flex flex-col opacity-80"}>
+              <p className="text-xs font-semibold tracking-widest text-muted-foreground">{"BIENTÔT"}</p>
+              <h3 className="mt-2 text-2xl font-bold">{"Essentiel"}</h3>
+              <p className="mt-4 text-sm text-muted-foreground flex-1">{"Plus d’analyses et plus de suivi. Détails à venir."}</p>
+            </div>
+            <div className={CARTE + " p-6 flex flex-col opacity-80"}>
+              <p className="text-xs font-semibold tracking-widest text-muted-foreground">{"BIENTÔT"}</p>
+              <h3 className="mt-2 text-2xl font-bold">{"Premium"}</h3>
+              <p className="mt-4 text-sm text-muted-foreground flex-1">{"Toute la puissance de paytrak. Détails à venir."}</p>
             </div>
           </div>
         </section>
