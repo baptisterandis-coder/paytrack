@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 const BOUTON_PRINCIPAL =
   "bg-gradient-primary shadow-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-opacity";
 const CARTE = "bg-gradient-card border border-border/50 rounded-2xl shadow-card";
-const SECTION = "max-w-6xl mx-auto px-5 py-16 md:py-24";
-const GRILLE = "grid md:grid-cols-2 gap-10 md:gap-16 items-center";
+const SECTION = "max-w-6xl mx-auto px-5 py-10 md:py-14";
+const GRILLE = "grid md:grid-cols-2 gap-6 md:gap-10 items-center";
 
 const LIGNES_EXEMPLES = ["CSG déductible", "Retraite complémentaire", "Prévoyance", "Net social"];
 const TROPHEES = ["Premier 5K", "24 mois sans trou", "100 000 € cumulés"];
@@ -64,7 +64,7 @@ export default async function Home() {
 
       <main>
         <section className="relative bg-[radial-gradient(ellipse_at_top,rgba(240,96,30,0.14),transparent_65%)]">
-          <div className="max-w-3xl mx-auto px-5 pt-20 pb-24 sm:pt-28 sm:pb-32 text-center">
+          <div className="max-w-3xl mx-auto px-5 pt-12 pb-10 sm:pt-16 sm:pb-14 text-center">
             <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.05]">
               <span className="block">Comprends.</span>
               <span className="block">Suis.</span>
@@ -197,7 +197,7 @@ export default async function Home() {
         </section>
 
         <section id="donnees" className="bg-secondary/30 border-y border-border/40">
-          <div className="max-w-3xl mx-auto px-5 py-16">
+          <div className="max-w-3xl mx-auto px-5 py-10">
             <h2 className="text-2xl sm:text-4xl font-bold text-center">{"Tes fiches de paie sont sensibles"}</h2>
             <p className="mt-4 text-center text-muted-foreground">{"Voici ce que l'on peut affirmer, et rien de plus."}</p>
             <ul className="mt-10 space-y-4">
@@ -213,7 +213,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="max-w-3xl mx-auto px-5 py-20 text-center">
+        <section className="max-w-3xl mx-auto px-5 py-12 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold">{"Ta carrière mérite mieux qu'un dossier de PDF"}</h2>
           <div className="mt-8">
             <Link href="/auth" className={BOUTON_PRINCIPAL + " inline-block px-8 py-3.5"}>
