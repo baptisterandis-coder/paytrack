@@ -199,15 +199,16 @@ export default async function Home() {
         <section id="formules" className={SECTION}>
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Choisis ton niveau"}</h2>
-            <p className="mt-3 text-muted-foreground">{"Commence gratuitement. Les formules avancées arrivent bientôt."}</p>
+            <p className="mt-3 text-muted-foreground">{"Commence gratuitement. L’abonnement arrive bientôt."}</p>
           </div>
-          <div className="mt-8 grid md:grid-cols-3 gap-4">
+          <div className="mt-8 grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
             <div className={CARTE + " p-6 border-primary/60 flex flex-col"}>
               <p className="text-xs font-semibold tracking-widest text-primary">{"GRATUIT"}</p>
               <h3 className="mt-2 text-2xl font-bold">{"Découverte"}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{"La version limitée pour démarrer."}</p>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground flex-1">
                 <li>{"Tes bulletins rangés au même endroit"}</li>
-                <li>{"Lecture et explication de chaque ligne"}</li>
+                <li>{"Lecture et explication de tes lignes"}</li>
                 <li>{"Courbe de progression"}</li>
                 <li>{"Objectifs et trophées"}</li>
               </ul>
@@ -215,15 +216,11 @@ export default async function Home() {
                 {"Commencer gratuitement"}
               </Link>
             </div>
-            <div className={CARTE + " p-6 flex flex-col opacity-80"}>
-              <p className="text-xs font-semibold tracking-widest text-muted-foreground">{"BIENTÔT"}</p>
-              <h3 className="mt-2 text-2xl font-bold">{"Essentiel"}</h3>
-              <p className="mt-4 text-sm text-muted-foreground flex-1">{"Plus d’analyses et plus de suivi. Détails à venir."}</p>
-            </div>
-            <div className={CARTE + " p-6 flex flex-col opacity-80"}>
+            <div className={CARTE + " p-6 flex flex-col"}>
               <p className="text-xs font-semibold tracking-widest text-muted-foreground">{"BIENTÔT"}</p>
               <h3 className="mt-2 text-2xl font-bold">{"Premium"}</h3>
-              <p className="mt-4 text-sm text-muted-foreground flex-1">{"Toute la puissance de paytrak. Détails à venir."}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{"Au mois ou à l’année, au choix."}</p>
+              <p className="mt-4 text-sm text-muted-foreground flex-1">{"Toute la puissance de paytrak, sans limite. Tarifs et détails à venir."}</p>
             </div>
           </div>
         </section>
