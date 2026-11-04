@@ -94,7 +94,7 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="01" verbe="Comprends" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Enfin comprendre ta fiche de paie"}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Enfin comprendre ta fiche de paie"}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
                   "« CSG déductible », « contribution d'équilibre technique »… Chaque ligne de ton bulletin expliquée en français simple, avec ton montant à toi."
