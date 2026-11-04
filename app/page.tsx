@@ -95,10 +95,10 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="01" verbe="Comprends" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Enfin comprendre ta fiche de paie"}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ta fiche de paie n’aura plus aucun secret pour toi."}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
-                  "Chaque ligne de ton bulletin expliquée en français simple, avec ton montant à toi. Ta fiche de paie est aussi contrôlée pour repérer les anomalies et comparée au mois précédent : tu vois tout de suite ce qui a changé."
+                  "Avec paytrak, tu as un contrôleur à chaque bulletin. Chaque ligne est expliquée avec tes montants et tes cumuls, chaque écart avec le mois précédent est relevé, et tout ce qui mérite d’être vérifié est signalé."
                 }
               </p>
             </div>
