@@ -1,91 +1,116 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Download, FileText, Lightbulb } from "lucide-react";
 
-const CARTE = "bg-gradient-card border border-border/50 rounded-2xl shadow-card";
-const LIGNES = ["CSG déductible", "Retraite complémentaire", "Prévoyance", "Net social"];
-const TITRES = ["Chaque ligne expliquée", "Contrôlé et comparé", "Ton montant et ton cumul"];
+const FOND = "rounded-2xl border border-[#1e2a44] bg-[#0b0f1a] p-3 sm:p-4";
+const CARTE = "rounded-xl border border-[#1e2a44] bg-[#10172a]";
+const TITRES = ["Contrôlé et comparé à chaque bulletin", "Chaque ligne, ton montant et ton cumul", "Tous tes bulletins au même endroit"];
 
-function Lexique() {
+const LISTE = [
+  ["septembre 2026", "2 463 €", "3 298 €", "171 €"],
+  ["août 2026", "2 425 €", "3 246 €", "168 €"],
+  ["juillet 2026", "2 431 €", "3 251 €", "169 €"],
+  ["juin 2026", "2 418 €", "3 240 €", "167 €"],
+];
+
+const LIGNES = [
+  ["Salaire de base", "3 120 €", "28 080 €"],
+  ["CSG déductible", "165 €", "1 485 €"],
+  ["Retraite complémentaire", "214 €", "1 926 €"],
+  ["Prévoyance", "38 €", "342 €"],
+  ["Net social", "2 702 €", "24 318 €"],
+];
+
+function Bulletin() {
   return (
-    <div>
-      <p className="text-xs text-muted-foreground mb-3">Dans l’onglet Comprendre</p>
-      <div className="flex flex-wrap gap-2 mb-5">
-        {LIGNES.map((ligne) => (
-          <span key={ligne} className="text-xs bg-secondary/70 rounded-full px-3 py-1.5">{ligne}</span>
-        ))}
+    <div className={CARTE + " p-4"}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 shrink-0 rounded-[10px] bg-[#16233f] flex items-center justify-center text-primary">
+            <FileText className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-white truncate">bulletin-de-paie-2026-09.pdf</p>
+            <p className="text-xs text-[#8a97b5]">septembre 2026 · NOVA SERVICES</p>
+          </div>
+        </div>
+        <span className="shrink-0 inline-flex items-center gap-1 text-xs text-[#34c77b] bg-[#0f2a1e] rounded-full px-2.5 py-1">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          Contrôlé
+        </span>
       </div>
-      <div className="bg-primary/10 rounded-xl p-4">
-        <p className="font-semibold mb-1">CSG déductible</p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Une contribution qui finance la protection sociale, déduite de ton revenu imposable : tu paies donc un peu moins d’impôt grâce à elle.
+      <div className="grid grid-cols-3 gap-3 border-t border-[#1e2a44] mt-3.5 pt-3">
+        <div><p className="text-xs text-[#8a97b5]">Net</p><p className="font-semibold text-[#34c77b]">2 463 €</p></div>
+        <div><p className="text-xs text-[#8a97b5]">Brut</p><p className="font-semibold text-primary">3 298 €</p></div>
+        <div><p className="text-xs text-[#8a97b5]">Impôt / PAS</p><p className="font-semibold text-[#c3cbe0]">171 €</p></div>
+      </div>
+      <div className="border-t border-[#1e2a44] mt-3 pt-3">
+        <p className="text-sm text-primary flex items-center gap-1.5 mb-2"><Lightbulb className="w-4 h-4" />Insights<ChevronDown className="w-3.5 h-3.5" /></p>
+        <div className="rounded-[10px] bg-[#16233f] px-3.5 py-3 text-[13px] leading-relaxed text-[#dbe2f2] space-y-1">
+          <p>Ton net progresse de <strong className="font-semibold text-white">+38 €</strong> par rapport à août, porté par une hausse du brut de +52 €.</p>
+          <p>Ton impôt à la source augmente de 3 € : c’est cohérent avec la hausse du brut.</p>
+          <p>Aucune ligne nouvelle ni disparue par rapport au mois précédent.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Comprendre() {
+  return (
+    <div className={CARTE + " p-4"}>
+      <div className="grid grid-cols-[1fr_auto_auto] gap-x-5 gap-y-1.5 text-[13px] items-center">
+        <span className="text-xs text-[#8a97b5]">Ligne</span>
+        <span className="text-xs text-[#8a97b5] text-right">Ce mois-ci</span>
+        <span className="text-xs text-[#8a97b5] text-right">Cumul annuel</span>
+        {LIGNES.map(([nom, mois, cumul]) => {
+          const actif = nom === "CSG déductible";
+          return (
+            <div key={nom} className="contents">
+              <span className={actif ? "text-white bg-[#2a1a14] rounded-md px-2 py-0.5 -ml-2 w-fit" : "text-[#c3cbe0]"}>{nom}</span>
+              <span className={"text-right " + (actif ? "text-primary font-semibold" : "text-white")}>{mois}</span>
+              <span className={"text-right " + (actif ? "text-primary font-semibold" : "text-white")}>{cumul}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-3.5 rounded-[10px] bg-[#16233f] px-3.5 py-3">
+        <p className="text-[13px] font-medium text-white mb-1">CSG déductible</p>
+        <p className="text-[13px] leading-relaxed text-[#aab5d0]">
+          Une contribution qui finance la protection sociale, déduite de ton revenu imposable : tu paies donc un peu moins d’impôt grâce à elle. Cette année, tu en as déjà versé 1 485 €.
         </p>
       </div>
     </div>
   );
 }
 
-function Controle() {
-  const lignes = [
-    ["Net à payer", "2 463 €", "+38 €"],
-    ["Brut", "3 298 €", "+52 €"],
-    ["Impôt (PAS)", "171 €", "+3 €"],
-  ];
+function Liste() {
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-xs text-muted-foreground">Exemple</p>
-        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/15 rounded-full px-3 py-1">
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          Contrôlé
-        </span>
+      <div className="flex items-center gap-2.5 mb-3">
+        <span className="text-base font-semibold text-white">Vos bulletins</span>
+        <span className="text-xs text-[#c3cbe0] bg-[#16233f] rounded-full px-2.5 py-0.5">54</span>
+        <span className="ml-auto text-xs text-[#c3cbe0] border border-[#1e2a44] rounded-lg px-2.5 py-1">Toutes les années</span>
       </div>
-      <div className="space-y-2 text-sm">
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>Ce mois-ci</span>
-          <span>vs mois précédent</span>
-        </div>
-        {lignes.map(([nom, montant, ecart]) => (
-          <div key={nom} className="flex items-center justify-between rounded-lg bg-secondary/50 px-3 py-2.5">
-            <span className="text-muted-foreground">{nom}</span>
-            <span className="flex items-center gap-4">
-              <span className="font-semibold">{montant}</span>
-              <span className="w-14 text-right text-xs font-medium text-primary">{ecart}</span>
-            </span>
+      <div className="space-y-2">
+        {LISTE.map(([periode, net, brut, impot]) => (
+          <div key={periode} className={CARTE + " px-3.5 py-3 flex items-center gap-3"}>
+            <FileText className="w-5 h-5 shrink-0 text-primary" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-medium text-white">{periode}</p>
+              <p className="text-xs text-[#8a97b5]">Net {net} · Brut {brut} · Impôt {impot}</p>
+            </div>
+            <span className="text-xs text-[#34c77b]">Traité</span>
+            <Download className="w-4 h-4 text-[#8a97b5]" />
           </div>
         ))}
       </div>
-      <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
-        Chaque écart est relevé et expliqué. Ce qui mérite d’être vérifié est signalé.
-      </p>
     </div>
   );
 }
 
-function Cumul() {
-  return (
-    <div>
-      <p className="text-xs text-muted-foreground mb-4">Exemple</p>
-      <p className="font-semibold mb-3">CSG déductible</p>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-secondary/50 p-4">
-          <p className="text-xs text-muted-foreground">Ce mois-ci</p>
-          <p className="mt-1 text-2xl font-extrabold">165 €</p>
-        </div>
-        <div className="rounded-xl bg-primary/10 p-4">
-          <p className="text-xs text-muted-foreground">Cumul depuis janvier</p>
-          <p className="mt-1 text-2xl font-extrabold text-primary">825 €</p>
-        </div>
-      </div>
-      <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
-        Les montants et les cumuls viennent de ton bulletin, pas d’un exemple générique.
-      </p>
-    </div>
-  );
-}
-
-const SLIDES = [Lexique, Controle, Cumul];
+const SLIDES = [Bulletin, Comprendre, Liste];
 
 export function CarrouselComprends() {
   const [index, setIndex] = useState(0);
@@ -101,15 +126,13 @@ export function CarrouselComprends() {
   const aller = (n: number) => setIndex((n + SLIDES.length) % SLIDES.length);
 
   return (
-    <div
-      className={CARTE + " p-6"}
-      onMouseEnter={() => setPause(true)}
-      onMouseLeave={() => setPause(false)}
-    >
-      <div className="min-h-[250px]">
-        <Slide />
+    <div onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)}>
+      <div className={FOND}>
+        <div className="min-h-[330px]">
+          <Slide />
+        </div>
       </div>
-      <div className="mt-5 pt-4 border-t border-border/50 flex items-center justify-between">
+      <div className="mt-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {SLIDES.map((_, i) => (
             <button
