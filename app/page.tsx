@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Lock, MapPin, Sparkles, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
+import { CarrouselComprends } from "@/components/CarrouselComprends";
 
 export const metadata: Metadata = {
   title: "paytrak — Comprends. Suis. Progresse.",
@@ -97,28 +98,11 @@ export default async function Home() {
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Enfin comprendre ta fiche de paie"}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
-                  "« CSG déductible », « contribution d'équilibre technique »… Chaque ligne de ton bulletin expliquée en français simple, avec ton montant à toi."
+                  "Chaque ligne de ton bulletin expliquée en français simple, avec ton montant à toi. Ta fiche de paie est aussi contrôlée pour repérer les anomalies et comparée au mois précédent : tu vois tout de suite ce qui a changé."
                 }
               </p>
             </div>
-            <div className={CARTE + " p-6"}>
-              <p className="text-xs text-muted-foreground mb-3">{"Dans l'onglet Comprendre"}</p>
-              <div className="flex flex-wrap gap-2 mb-5">
-                {LIGNES_EXEMPLES.map((ligne) => (
-                  <span key={ligne} className="text-xs bg-secondary/70 rounded-full px-3 py-1.5">
-                    {ligne}
-                  </span>
-                ))}
-              </div>
-              <div className="bg-primary/10 rounded-xl p-4">
-                <p className="font-semibold mb-1">{"CSG déductible"}</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {
-                    "Une contribution qui finance la protection sociale, déduite de ton revenu imposable : tu paies donc un peu moins d'impôt grâce à elle."
-                  }
-                </p>
-              </div>
-            </div>
+            <CarrouselComprends />
           </div>
         </section>
 
