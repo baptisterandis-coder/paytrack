@@ -28,9 +28,9 @@ function Lexique() {
 
 function Controle() {
   const lignes = [
-    ["Net à payer", "3 855 €", "+31 €"],
-    ["Brut", "5 646 €", "+0 €"],
-    ["Impôt (PAS)", "508 €", "-11 €"],
+    ["Net à payer", "2 463 €", "+38 €"],
+    ["Brut", "3 298 €", "+52 €"],
+    ["Impôt (PAS)", "171 €", "+3 €"],
   ];
   return (
     <div>
@@ -71,11 +71,11 @@ function Cumul() {
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-xl bg-secondary/50 p-4">
           <p className="text-xs text-muted-foreground">Ce mois-ci</p>
-          <p className="mt-1 text-2xl font-extrabold">195 €</p>
+          <p className="mt-1 text-2xl font-extrabold">165 €</p>
         </div>
         <div className="rounded-xl bg-primary/10 p-4">
           <p className="text-xs text-muted-foreground">Cumul depuis janvier</p>
-          <p className="mt-1 text-2xl font-extrabold text-primary">975 €</p>
+          <p className="mt-1 text-2xl font-extrabold text-primary">825 €</p>
         </div>
       </div>
       <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
