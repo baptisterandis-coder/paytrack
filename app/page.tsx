@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Lock, MapPin, Sparkles, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
+import { RedirectionAppInstallee } from "@/components/RedirectionAppInstallee";
 import { CarrouselComprends } from "@/components/CarrouselComprends";
 
 export const metadata: Metadata = {
@@ -47,18 +47,18 @@ export default async function Home() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  // Un utilisateur déjà connecté (y compris depuis l'appli installée) va directement à son tableau de bord.
-  if (user) redirect("/dashboard");
+const espace = user ? "/dashboard" : "/auth";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <RedirectionAppInstallee connecte={!!user} />
       <header className="sticky top-0 z-30 border-b border-border/40 bg-background/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <Link href="/" aria-label="paytrak, accueil">
             <Logo className="h-10 sm:h-11" />
           </Link>
-          <Link href="/auth" className={BOUTON_PRINCIPAL + " text-sm px-5 py-2.5"}>
-            Connexion
+          <Link href={espace} className={BOUTON_PRINCIPAL + " text-sm px-5 py-2.5"}>
+            {user ? "Mon espace" : "Connexion"}
           </Link>
         </div>
       </header>
@@ -78,7 +78,7 @@ export default async function Home() {
               {"paytrak la lit, l’explique, la range, et transforme ta carrière en courbe de progression, avec des trophées à débloquer et des records à battre."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/auth" className={BOUTON_PRINCIPAL + " px-8 py-3.5"}>
+              <Link href={espace} className={BOUTON_PRINCIPAL + " px-8 py-3.5"}>
                 Voir ma progression
               </Link>
               <a
@@ -196,7 +196,7 @@ export default async function Home() {
                 <li>{"Courbe de progression"}</li>
                 <li>{"Objectifs et trophées"}</li>
               </ul>
-              <Link href="/auth" className={BOUTON_PRINCIPAL + " mt-6 px-6 py-3 text-center"}>
+              <Link href={espace} className={BOUTON_PRINCIPAL + " mt-6 px-6 py-3 text-center"}>
                 {"Commencer gratuitement"}
               </Link>
             </div>
@@ -229,7 +229,7 @@ export default async function Home() {
         <section className="max-w-3xl mx-auto px-5 py-12 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold">{"Ta carrière mérite mieux qu'un dossier de PDF"}</h2>
           <div className="mt-8">
-            <Link href="/auth" className={BOUTON_PRINCIPAL + " inline-block px-8 py-3.5"}>
+            <Link href={espace} className={BOUTON_PRINCIPAL + " inline-block px-8 py-3.5"}>
               Voir ma progression
             </Link>
           </div>
