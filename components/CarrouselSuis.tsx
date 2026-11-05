@@ -48,7 +48,7 @@ function Pastille({ rang }: { rang: string }) {
 function Tableau() {
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 gap-2.5">
         {TUILES.map(({ titre, valeur, delta, Icone, vert }) => (
           <div key={titre} className={CARTE + " p-3 relative"}>
             <p className="text-[11px] text-[#8a97b5]">{titre}</p>
@@ -68,7 +68,7 @@ function Tableau() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-primary" />2026</span>
           </p>
         </div>
-        <div className="flex items-end gap-1 sm:gap-2 h-[130px] border-b border-[#1e2a44]">
+        <div className="flex items-end gap-1 sm:gap-2 h-[110px] border-b border-[#1e2a44]">
           {MOIS.map((m, i) => (
             <div key={m} className="flex-1 h-full flex items-end justify-center gap-[2px]">
               <div className="w-1/2 max-w-[14px] rounded-t-sm bg-[#3a5a99]" style={{ height: hauteur(NET_2025[i]) }} />
