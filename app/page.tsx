@@ -109,10 +109,10 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="02" verbe="Suis" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton suivi de paie, sans jamais ouvrir un tableur."}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Dépose ton bulletin, le reste se fait tout seul."}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
-                  "Où en es-tu vraiment cette année ? Combien as-tu perçu, quel impôt as-tu payé, de combien ton salaire a-t-il augmenté d’une année sur l’autre ? paytrak te répond en un coup d’œil, sans que tu aies rien à saisir : tu déposes ton bulletin, tout se calcule et se range tout seul."
+                  "Où en es-tu vraiment cette année ? Combien as-tu perçu, quel impôt as-tu payé, de combien ton salaire a-t-il augmenté d’une année sur l’autre ? paytrak te répond en un coup d’œil, sans tableau à tenir ni chiffre à recopier."
                 }
               </p>
             </div>
