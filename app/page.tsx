@@ -4,6 +4,7 @@ import { Lock, MapPin, Sparkles, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
 import { RedirectionAppInstallee } from "@/components/RedirectionAppInstallee";
+import { LienEspace } from "@/components/LienEspace";
 import { CarrouselComprends } from "@/components/CarrouselComprends";
 
 export const metadata: Metadata = {
@@ -47,19 +48,16 @@ export default async function Home() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-const espace = user ? "/dashboard" : "/auth";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <RedirectionAppInstallee connecte={!!user} />
+      <RedirectionAppInstallee />
       <header className="sticky top-0 z-30 border-b border-border/40 bg-background/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <Link href="/" aria-label="paytrak, accueil">
             <Logo className="h-10 sm:h-11" />
           </Link>
-          <Link href={espace} className={BOUTON_PRINCIPAL + " text-sm px-5 py-2.5"}>
-            {user ? "Mon espace" : "Connexion"}
-          </Link>
+          <LienEspace connecteServeur={!!user} className={BOUTON_PRINCIPAL + " text-sm px-5 py-2.5"} texte="Connexion" texteConnecte="Mon espace" />
         </div>
       </header>
 
@@ -78,9 +76,9 @@ const espace = user ? "/dashboard" : "/auth";
               {"paytrak la lit, l’explique, la range, et transforme ta carrière en courbe de progression, avec des trophées à débloquer et des records à battre."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href={espace} className={BOUTON_PRINCIPAL + " px-8 py-3.5"}>
+              <LienEspace connecteServeur={!!user} className={BOUTON_PRINCIPAL + " px-8 py-3.5"}>
                 Voir ma progression
-              </Link>
+              </LienEspace>
               <a
                 href="#formules"
                 className="border border-border text-foreground font-medium rounded-xl px-8 py-3.5 hover:bg-secondary/60 transition-colors"
@@ -196,9 +194,9 @@ const espace = user ? "/dashboard" : "/auth";
                 <li>{"Courbe de progression"}</li>
                 <li>{"Objectifs et trophées"}</li>
               </ul>
-              <Link href={espace} className={BOUTON_PRINCIPAL + " mt-6 px-6 py-3 text-center"}>
+              <LienEspace connecteServeur={!!user} className={BOUTON_PRINCIPAL + " mt-6 px-6 py-3 text-center"}>
                 {"Commencer gratuitement"}
-              </Link>
+              </LienEspace>
             </div>
             <div className={CARTE + " p-6 flex flex-col"}>
               <p className="text-xs font-semibold tracking-widest text-muted-foreground">{"BIENTÔT"}</p>
@@ -229,9 +227,9 @@ const espace = user ? "/dashboard" : "/auth";
         <section className="max-w-3xl mx-auto px-5 py-12 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold">{"Ta carrière mérite mieux qu'un dossier de PDF"}</h2>
           <div className="mt-8">
-            <Link href={espace} className={BOUTON_PRINCIPAL + " inline-block px-8 py-3.5"}>
+            <LienEspace connecteServeur={!!user} className={BOUTON_PRINCIPAL + " inline-block px-8 py-3.5"}>
               Voir ma progression
-            </Link>
+            </LienEspace>
           </div>
         </section>
       </main>
