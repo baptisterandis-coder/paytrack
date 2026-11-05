@@ -128,7 +128,7 @@ export function CarrouselComprends() {
   return (
     <div onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)}>
       <div className={FOND}>
-        <div className="min-h-[330px]">
+        <div className="h-[332px]">
           <Slide />
         </div>
       </div>
