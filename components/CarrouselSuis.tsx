@@ -39,7 +39,7 @@ function Pastille({ rang }: { rang: string }) {
   const Icone = premier ? Trophy : Medal;
   const style = premier ? "bg-[#3a2a2e] text-primary" : podium ? "bg-[#1b2a4d] text-[#8aa4d6]" : "bg-[#16203a] text-[#8a97b5]";
   return (
-    <span className={"w-10 h-10 shrink-0 rounded-full flex items-center justify-center " + style}>
+    <span className={"w-9 h-9 shrink-0 rounded-full flex items-center justify-center " + style}>
       {premier || podium ? <Icone className="w-5 h-5" /> : <span className="text-xs font-medium">{rang}</span>}
     </span>
   );
@@ -50,9 +50,9 @@ function Tableau() {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2.5">
         {TUILES.map(({ titre, valeur, delta, Icone, vert }) => (
-          <div key={titre} className={CARTE + " p-3 relative"}>
+          <div key={titre} className={CARTE + " p-2.5 relative"}>
             <p className="text-[11px] text-[#8a97b5]">{titre}</p>
-            <p className="mt-1 text-lg sm:text-xl font-semibold text-white">{valeur}</p>
+            <p className="text-lg font-semibold text-white">{valeur}</p>
             <p className="mt-0.5 text-[11px] text-[#34c77b] min-h-[16px]">{delta ? "↗ " + delta : ""}</p>
             <span className={"absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center " + (vert ? "bg-[#17454f] text-[#34c77b]" : "bg-[#3a2a2e] text-primary")}>
               <Icone className="w-4 h-4" />
@@ -60,7 +60,7 @@ function Tableau() {
           </div>
         ))}
       </div>
-      <div className={CARTE + " p-3 sm:p-4"}>
+      <div className={CARTE + " p-3"}>
         <div className="flex items-center justify-between mb-3">
           <p className="text-[13px] font-medium text-white">Net mensuel · 2025 / 2026</p>
           <p className="text-[11px] text-[#8a97b5] flex items-center gap-3">
@@ -68,7 +68,7 @@ function Tableau() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-primary" />2026</span>
           </p>
         </div>
-        <div className="flex items-end gap-1 sm:gap-2 h-[110px] border-b border-[#1e2a44]">
+        <div className="flex items-end gap-1 sm:gap-2 h-[70px] border-b border-[#1e2a44]">
           {MOIS.map((m, i) => (
             <div key={m} className="flex-1 h-full flex items-end justify-center gap-[2px]">
               <div className="w-1/2 max-w-[14px] rounded-t-sm bg-[#3a5a99]" style={{ height: hauteur(NET_2025[i]) }} />
@@ -112,9 +112,9 @@ function Progression() {
   return (
     <div className={CARTE + " p-4"}>
       <p className="flex items-center gap-2 text-sm font-semibold text-white mb-3"><TrendingUp className="w-4 h-4 text-[#34c77b]" />Progression 5 ans</p>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {ANNEES.map((a) => (
-          <div key={a.annee} className="rounded-xl border border-[#1e2a44] bg-[#0f1830] px-3 py-2 flex items-center gap-3 sm:gap-4">
+          <div key={a.annee} className="rounded-xl border border-[#1e2a44] bg-[#0f1830] px-3 py-1.5 flex items-center gap-3 sm:gap-4">
             <Pastille rang={a.rang} />
             <div className="w-10 sm:w-14"><p className="text-[10px] uppercase text-[#8a97b5]">Année</p><p className="text-[13px] font-semibold text-primary">{a.annee}</p></div>
             <div className="flex-1 grid grid-cols-3 gap-x-3">
@@ -147,7 +147,7 @@ export function CarrouselSuis() {
   return (
     <div onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)}>
       <div className={FOND}>
-        <div className="min-h-[330px]">
+        <div className="h-[332px]">
           <Slide />
         </div>
       </div>
