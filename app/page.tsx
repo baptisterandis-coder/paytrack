@@ -95,7 +95,7 @@ export default async function Home() {
             <div>
               <Etiquette numero="01" verbe="Comprends" />
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ta fiche de paie n’aura plus aucun secret pour toi."}</h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
+              <p className="mt-4 text-muted-foreground leading-relaxed text-justify">
                 {
                   "Avec paytrak, tu as un contrôleur à chaque bulletin. Chaque ligne est expliquée avec tes montants et tes cumuls, chaque écart avec le mois précédent est relevé, et tout ce qui mérite d’être vérifié est signalé."
                 }
@@ -110,7 +110,7 @@ export default async function Home() {
             <div>
               <Etiquette numero="02" verbe="Suis" />
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Dépose ton bulletin, le reste se fait tout seul."}</h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
+              <p className="mt-4 text-muted-foreground leading-relaxed text-justify">
                 {
                   "Où en es-tu vraiment cette année ? Combien as-tu perçu, quel impôt as-tu payé, de combien ton salaire a-t-il augmenté d’une année sur l’autre ? paytrak te répond en un coup d’œil, sans tableau à tenir ni chiffre à recopier."
                 }
