@@ -109,10 +109,10 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="02" verbe="Suis" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton parcours, bulletin après bulletin."}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton suivi de paie, sans jamais ouvrir un tableur."}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
-                  "Chaque bulletin que tu déposes vient prolonger ta courbe : net, brut, impôt, évolution. En un coup d’œil, tu vois d’où tu viens, où tu en es, et ce que chaque année t’a vraiment rapporté. Tout ton historique est là, téléchargeable quand tu veux."
+                  "Où en es-tu vraiment cette année ? Combien as-tu perçu, quel impôt as-tu payé, de combien ton salaire a-t-il augmenté d’une année sur l’autre ? paytrak te répond en un coup d’œil, sans que tu aies rien à saisir : tu déposes ton bulletin, tout se calcule et se range tout seul."
                 }
               </p>
             </div>
