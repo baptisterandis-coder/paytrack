@@ -6,6 +6,7 @@ import { Logo } from "@/components/Logo";
 import { RedirectionAppInstallee } from "@/components/RedirectionAppInstallee";
 import { LienEspace } from "@/components/LienEspace";
 import { CarrouselComprends } from "@/components/CarrouselComprends";
+import { CarrouselSuis } from "@/components/CarrouselSuis";
 
 export const metadata: Metadata = {
   title: "paytrak — Comprends. Suis. Progresse.",
@@ -108,35 +109,14 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="02" verbe="Suis" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Toute ta carrière en une seule courbe"}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Ton parcours, bulletin après bulletin."}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 {
-                  "Chaque bulletin que tu déposes est rangé dans ton espace privé, en Europe, et vient prolonger ta courbe. Plus besoin de fouiller tes mails : tout ton historique est là, téléchargeable quand tu veux."
+                  "Chaque bulletin que tu déposes vient prolonger ta courbe : net, brut, impôt, évolution. En un coup d’œil, tu vois d’où tu viens, où tu en es, et ce que chaque année t’a vraiment rapporté. Tout ton historique est là, téléchargeable quand tu veux."
                 }
               </p>
             </div>
-            <div className={CARTE + " p-6"}>
-              <p className="text-xs text-muted-foreground mb-4">{"Exemple · profil de démonstration"}</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{"Bulletins rangés"}</span>
-                  <span className="font-semibold">{"68"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{"Premier bulletin"}</span>
-                  <span className="font-semibold">{"2021"}</span>
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t border-border/50 flex items-baseline justify-between">
-                <span className="font-medium">{"Ton net depuis 2021"}</span>
-                <span className="text-4xl font-extrabold text-primary">{"+67 %"}</span>
-              </div>
-              <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
-                {
-                  "Ta courbe se met à jour à chaque nouveau bulletin, avec la comparaison au mois précédent."
-                }
-              </p>
-            </div>
+            <CarrouselSuis />
           </div>
         </section>
 
