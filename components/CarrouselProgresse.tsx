@@ -47,7 +47,7 @@ const GROUPES: { titre: string; colonnes: string; items: Trophee[] }[] = [
 function Carte({ t, rang }: { t: Trophee; rang: number }) {
   const ton = !t.ok ? "bg-[#141c33] text-[#5f6b87]" : rang === 0 ? "bg-[#1b2a4d] text-[#8aa4d6]" : "bg-[#3a2a2e] text-primary";
   return (
-    <div className={"rounded-xl border border-[#1e2a44] px-2 py-3 text-center " + (t.ok ? "bg-[#0f1830]" : "bg-[#0d1428] opacity-80")}>
+    <div className={"rounded-xl border border-[#1e2a44] px-2 py-2 text-center " + (t.ok ? "bg-[#0f1830]" : "bg-[#0d1428] opacity-80")}>
       <span className={"mx-auto w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-bold " + ton}>
         {t.ok ? t.code : <Lock className="w-4 h-4" />}
       </span>
@@ -65,8 +65,8 @@ function Carte({ t, rang }: { t: Trophee; rang: number }) {
 function Galerie({ index }: { index: number }) {
   const g = GROUPES[index];
   return (
-    <div className={CARTE + " p-4"}>
-      <div className="flex items-center justify-between mb-3">
+    <div className={CARTE + " p-3"}>
+      <div className="flex items-center justify-between mb-2">
         <p className="flex items-center gap-2 text-sm font-semibold text-white">
           <Trophy className="w-4 h-4 text-primary" />
           {"Galerie des Trophées"}
@@ -85,7 +85,7 @@ function Galerie({ index }: { index: number }) {
 
 function Objectif() {
   return (
-    <div className={CARTE + " mt-2 px-4 py-3"}>
+    <div className={CARTE + " mt-2 px-4 py-2"}>
       <div className="flex items-center justify-between">
         <p className="flex items-center gap-2 text-sm font-semibold text-white">
           <TrendingUp className="w-4 h-4 text-primary" />
@@ -107,8 +107,8 @@ function Objectif() {
           <p className="text-[13px] font-bold text-[#34c38f] whitespace-nowrap">{"+920 €"}</p>
         </div>
       </div>
-      <div className="mt-2 h-4 rounded-full bg-[#1b2a4d]">
-        <div className="h-4 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-[#0b0f1a]" style={{ width: "85%" }}>
+      <div className="mt-2 h-3 rounded-full bg-[#1b2a4d]">
+        <div className="h-3 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-[#0b0f1a]" style={{ width: "85%" }}>
           {"85%"}
         </div>
       </div>
