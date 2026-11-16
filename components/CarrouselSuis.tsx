@@ -117,10 +117,10 @@ function Progression() {
           <div key={a.annee} className="rounded-xl border border-[#1e2a44] bg-[#0f1830] px-3 py-1.5 flex items-center gap-3 sm:gap-4">
             <Pastille rang={a.rang} />
             <div className="w-10 sm:w-14"><p className="text-[10px] uppercase text-[#8a97b5]">Année</p><p className="text-[13px] font-semibold text-primary">{a.annee}</p></div>
-            <div className="flex-1 grid grid-cols-3 gap-x-3">
+            <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-x-3">
               <div><p className="text-[10px] uppercase text-[#8a97b5]">Total brut</p><p className="text-[13px] font-semibold text-primary">{a.total}</p></div>
               <div><p className="text-[10px] uppercase text-[#8a97b5]">Évolution</p><p className={"text-[13px] font-semibold " + (a.ton === "p" ? "text-[#34c77b]" : a.ton === "m" ? "text-[#e5566b]" : "text-[#8a97b5]")}>{a.evo}</p></div>
-              <div><p className="text-[10px] uppercase text-[#8a97b5]">Bulletins</p><p className="text-[13px] font-semibold text-white">{a.mois}</p></div>
+              <div className="hidden sm:block"><p className="text-[10px] uppercase text-[#8a97b5]">Bulletins</p><p className="text-[13px] font-semibold text-white">{a.mois}</p></div>
             </div>
           </div>
         ))}
