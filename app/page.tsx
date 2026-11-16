@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const BOUTON_PRINCIPAL =
   "bg-gradient-primary shadow-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-opacity";
 const CARTE = "bg-gradient-card border border-border/50 rounded-2xl shadow-card";
-const SECTION = "max-w-6xl mx-auto px-5 py-10 md:py-14";
+const SECTION = "max-w-6xl mx-auto px-5 py-6 md:py-8";
 const GRILLE = "grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-center";
 
 const LIGNES_EXEMPLES = ["CSG déductible", "Retraite complémentaire", "Prévoyance", "Net social"];
