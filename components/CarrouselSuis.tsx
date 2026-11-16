@@ -136,6 +136,19 @@ export function CarrouselSuis() {
   const [pause, setPause] = useState(false);
 
   useEffect(() => {
+    window.dispatchEvent(new CustomEvent("paytrak-slide", { detail: { id: "suis", index } }));
+  }, [index]);
+
+  useEffect(() => {
+    const f = (e: Event) => {
+      const d = (e as CustomEvent).detail;
+      if (d && d.id === "suis") setIndex(d.index);
+    };
+    window.addEventListener("paytrak-goto", f);
+    return () => window.removeEventListener("paytrak-goto", f);
+  }, []);
+
+  useEffect(() => {
     if (pause) return;
     const id = setInterval(() => setIndex((i) => (i + 1) % SLIDES.length), 6500);
     return () => clearInterval(id);
