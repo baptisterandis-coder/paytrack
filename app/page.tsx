@@ -7,6 +7,7 @@ import { RedirectionAppInstallee } from "@/components/RedirectionAppInstallee";
 import { LienEspace } from "@/components/LienEspace";
 import { CarrouselComprends } from "@/components/CarrouselComprends";
 import { CarrouselSuis } from "@/components/CarrouselSuis";
+import { CarrouselProgresse } from "@/components/CarrouselProgresse";
 
 export const metadata: Metadata = {
   title: "paytrak — Comprends. Suis. Progresse.",
@@ -125,36 +126,13 @@ export default async function Home() {
             <div>
               <Etiquette numero="03" verbe="Progresse" />
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Chaque palier se célèbre"}</h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
+              <p className="mt-4 text-muted-foreground leading-relaxed text-justify">
                 {
                   "Fixe-toi un objectif annuel ou mensuel, suis ton avance, et débloque des trophées au fil de ta carrière."
                 }
               </p>
             </div>
-            <div className={CARTE + " p-6"}>
-              <p className="text-xs text-muted-foreground mb-4">{"Exemple · profil de démonstration"}</p>
-              <div className="mb-5">
-                <div className="flex justify-between text-sm mb-2">
-                  <span>{"Objectif annuel 2026"}</span>
-                  <span className="font-semibold">{"70 %"}</span>
-                </div>
-                <div className="h-2.5 rounded-full bg-secondary overflow-hidden">
-                  <div className="h-full w-[70%] rounded-full bg-primary" />
-                </div>
-                <p className="mt-2 text-xs text-muted-foreground">{"45 500 € sur 65 000 € bruts"}</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {TROPHEES.map((trophee) => (
-                  <span
-                    key={trophee}
-                    className="text-xs rounded-full px-3 py-1.5 bg-primary/20 text-primary inline-flex items-center gap-1.5"
-                  >
-                    <Trophy className="w-3.5 h-3.5" />
-                    {trophee}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <CarrouselProgresse />
           </div>
         </section>
 
