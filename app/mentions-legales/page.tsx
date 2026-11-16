@@ -36,6 +36,8 @@ export default function MentionsLegales() {
           <br />
           Code APE : 62.01Z (programmation informatique)
           <br />
+          TVA non applicable, art. 293 B du CGI
+          <br />
           Localisation : 59263 Houplin-Ancoisne, France
           <br />
           Contact : <a className="text-primary hover:underline" href="mailto:contact@paytrak.fr">contact@paytrak.fr</a>
