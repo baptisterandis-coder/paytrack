@@ -128,7 +128,7 @@ export default async function Home() {
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{"Chaque palier se célèbre"}</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed text-justify">
                 {
-                  "Fixe-toi un objectif annuel ou mensuel, suis ton avance, et débloque des trophées au fil de ta carrière."
+                  "Chaque bulletin te rapproche du prochain trophée : un nouveau palier de salaire, un cumul qui grimpe, des mois d’affilée qui s’enchaînent. Ta carrière devient un parcours qu’on a plaisir à suivre."
                 }
               </p>
             </div>
