@@ -31,7 +31,7 @@ export function PointsCles({ id, points }: { id: string; points: Point[] }) {
   }, [id]);
 
   return (
-    <ul className="mt-6 space-y-2">
+    <ul className="mt-4 space-y-1.5">
       {points.map((p, i) => {
         const Icone = ICONES[p.icone] || Trophy;
         const on = i === actif;
@@ -41,7 +41,7 @@ export function PointsCles({ id, points }: { id: string; points: Point[] }) {
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent("paytrak-goto", { detail: { id, index: i } }))}
               className={
-                "w-full flex items-start gap-3 rounded-xl border px-3 py-3 text-left transition-colors " +
+                "w-full flex items-start gap-3 rounded-xl border px-3 py-2 text-left transition-colors " +
                 (on ? "border-primary/50 bg-primary/10" : "border-border/40 hover:bg-secondary/40")
               }
             >
@@ -55,7 +55,7 @@ export function PointsCles({ id, points }: { id: string; points: Point[] }) {
               </span>
               <span>
                 <span className="block text-sm font-semibold text-foreground">{p.titre}</span>
-                <span className="block text-sm text-muted-foreground">{p.texte}</span>
+                <span className="block text-[13px] leading-snug text-muted-foreground">{p.texte}</span>
               </span>
             </button>
           </li>
