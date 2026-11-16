@@ -96,8 +96,8 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="01" verbe="Comprends" />
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{"Ta fiche de paie n’aura plus aucun secret pour toi."}</h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed text-justify md:text-lg">
+              <h2 className="text-3xl font-bold tracking-tight">{"Ta fiche de paie n’aura plus aucun secret pour toi."}</h2>
+              <p className="mt-4 text-muted-foreground leading-normal text-justify text-[15px]">
                 {
                   "Avec paytrak, tu as un contrôleur à chaque bulletin. Chaque ligne est expliquée avec tes montants et tes cumuls, chaque écart avec le mois précédent est relevé, et tout ce qui mérite d’être vérifié est signalé."
                 }
@@ -112,8 +112,8 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="02" verbe="Suis" />
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{"Dépose ton bulletin, le reste se fait tout seul."}</h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed text-justify md:text-lg">
+              <h2 className="text-3xl font-bold tracking-tight">{"Dépose ton bulletin, le reste se fait tout seul."}</h2>
+              <p className="mt-4 text-muted-foreground leading-normal text-justify text-[15px]">
                 {
                   "Où en es-tu vraiment cette année ? Combien as-tu perçu, quel impôt as-tu payé, de combien ton salaire a-t-il augmenté d’une année sur l’autre ? paytrak te répond en un coup d’œil, sans tableau à tenir ni chiffre à recopier."
                 }
@@ -128,8 +128,8 @@ export default async function Home() {
           <div className={GRILLE}>
             <div>
               <Etiquette numero="03" verbe="Progresse" />
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{"Chaque palier se célèbre"}</h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed text-justify md:text-lg">
+              <h2 className="text-3xl font-bold tracking-tight">{"Chaque palier se célèbre"}</h2>
+              <p className="mt-4 text-muted-foreground leading-normal text-justify text-[15px]">
                 {
                   "Chaque bulletin te rapproche du prochain trophée : un nouveau palier de salaire, un cumul qui grimpe, des mois d’affilée qui s’enchaînent. Ta carrière devient un parcours qu’on a plaisir à suivre."
                 }
@@ -142,7 +142,7 @@ export default async function Home() {
 
         <section id="formules" className={SECTION}>
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{"Choisis ton niveau"}</h2>
+            <h2 className="text-3xl font-bold tracking-tight">{"Choisis ton niveau"}</h2>
             <p className="mt-3 text-muted-foreground">{"Commence gratuitement. L’abonnement arrive bientôt."}</p>
           </div>
           <div className="mt-8 grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
