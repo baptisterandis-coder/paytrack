@@ -217,7 +217,10 @@ export default async function Home() {
       <footer className="border-t border-border/40">
         <div className="max-w-6xl mx-auto px-5 py-8 flex items-center justify-between text-sm text-muted-foreground">
           <Logo className="h-7" />
-          <span>{"© 2026 paytrak"}</span>
+          <div className="flex items-center gap-4">
+            <Link href="/mentions-legales" className="hover:text-foreground">{"Mentions légales"}</Link>
+            <span>{"© 2026 paytrak"}</span>
+          </div>
         </div>
       </footer>
     </div>
