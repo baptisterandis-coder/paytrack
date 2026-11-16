@@ -4,6 +4,7 @@ import { Lock, MapPin, Sparkles, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
 import { RedirectionAppInstallee } from "@/components/RedirectionAppInstallee";
+import { PointsCles } from "@/components/PointsCles";
 import { LienEspace } from "@/components/LienEspace";
 import { CarrouselComprends } from "@/components/CarrouselComprends";
 import { CarrouselSuis } from "@/components/CarrouselSuis";
@@ -101,6 +102,7 @@ export default async function Home() {
                   "Avec paytrak, tu as un contrôleur à chaque bulletin. Chaque ligne est expliquée avec tes montants et tes cumuls, chaque écart avec le mois précédent est relevé, et tout ce qui mérite d’être vérifié est signalé."
                 }
               </p>
+              <PointsCles id="comprends" points={[{"icone":"ShieldCheck","titre":"Contrôlé à chaque bulletin","texte":"Chaque écart avec le mois précédent est relevé et expliqué."},{"icone":"ScanSearch","titre":"Chaque ligne décryptée","texte":"Ton montant, ton cumul, et ce que cela signifie pour toi."},{"icone":"FolderOpen","titre":"Tous tes bulletins au même endroit","texte":"Classés, retrouvables en un clic."}]} />
             </div>
             <CarrouselComprends />
           </div>
@@ -116,6 +118,7 @@ export default async function Home() {
                   "Où en es-tu vraiment cette année ? Combien as-tu perçu, quel impôt as-tu payé, de combien ton salaire a-t-il augmenté d’une année sur l’autre ? paytrak te répond en un coup d’œil, sans tableau à tenir ni chiffre à recopier."
                 }
               </p>
+              <PointsCles id="suis" points={[{"icone":"LayoutDashboard","titre":"Ton tableau de bord, dès l’ouverture","texte":"Tes cumuls net, brut et impôt de l’année, sans rien saisir."},{"icone":"Award","titre":"Tes salaires records","texte":"Tes meilleurs mois, classés automatiquement."},{"icone":"BarChart3","titre":"Ta progression, année après année","texte":"Ton évolution en euros et en pourcentage, d’une année sur l’autre."}]} />
             </div>
             <CarrouselSuis />
           </div>
@@ -131,6 +134,7 @@ export default async function Home() {
                   "Chaque bulletin te rapproche du prochain trophée : un nouveau palier de salaire, un cumul qui grimpe, des mois d’affilée qui s’enchaînent. Ta carrière devient un parcours qu’on a plaisir à suivre."
                 }
               </p>
+              <PointsCles id="progresse" points={[{"icone":"Trophy","titre":"Tes paliers de salaire","texte":"Ton premier 2K, ton premier 5K… chaque cap de salaire brut devient un trophée."},{"icone":"TrendingUp","titre":"Ton cumul de carrière","texte":"50 000 €, 100 000 € et bien au-delà : vois ta carrière s’additionner."},{"icone":"Flame","titre":"Ta régularité","texte":"Chaque mois d’affilée fait grimper ta série."}]} />
             </div>
             <CarrouselProgresse />
           </div>
