@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Lock, Trophy } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, Trophy, TrendingUp } from "lucide-react";
 
 const FOND = "rounded-2xl border border-[#1e2a44] bg-[#0b0f1a] p-3 sm:p-4";
 const CARTE = "rounded-xl border border-[#1e2a44] bg-[#10172a]";
@@ -83,6 +83,39 @@ function Galerie({ index }: { index: number }) {
   );
 }
 
+function Objectif() {
+  return (
+    <div className={CARTE + " mt-2 px-4 py-3"}>
+      <div className="flex items-center justify-between">
+        <p className="flex items-center gap-2 text-sm font-semibold text-white">
+          <TrendingUp className="w-4 h-4 text-primary" />
+          {"Objectif Annuel Brut"}
+        </p>
+        <span className="text-[11px] text-[#8a97b5]">{"2026"}</span>
+      </div>
+      <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+        <div>
+          <p className="text-[10px] text-[#8a97b5]">{"Objectif"}</p>
+          <p className="text-[13px] font-bold text-white whitespace-nowrap">{"54 000 €"}</p>
+        </div>
+        <div>
+          <p className="text-[10px] text-[#8a97b5]">{"Actuel (10 bulletins)"}</p>
+          <p className="text-[13px] font-bold text-white whitespace-nowrap">{"45 920 €"}</p>
+        </div>
+        <div>
+          <p className="text-[10px] text-[#8a97b5]">{"Avance (fin octobre)"}</p>
+          <p className="text-[13px] font-bold text-[#34c38f] whitespace-nowrap">{"+920 €"}</p>
+        </div>
+      </div>
+      <div className="mt-2 h-4 rounded-full bg-[#1b2a4d]">
+        <div className="h-4 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-[#0b0f1a]" style={{ width: "85%" }}>
+          {"85%"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const SLIDES = [0, 1, 2];
 
 export function CarrouselProgresse() {
@@ -100,8 +133,9 @@ export function CarrouselProgresse() {
   return (
     <div onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)}>
       <div className={FOND}>
-        <div className="min-h-[332px] lg:h-[332px]">
+        <div className="min-h-[332px]">
           <Galerie index={index} />
+          <Objectif />
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between">
