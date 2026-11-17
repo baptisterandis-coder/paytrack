@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { lirePdfSansNir, ERREUR_PDF_SANS_TEXTE } from "@/lib/pdfSansNir";
 import type { Payslip } from "@/utils/salary";
 
 function usePayslipsState() {
@@ -29,16 +30,13 @@ function usePayslipsState() {
     }
   }, []);
 
-  const extractPayslipData = async (filePath: string, fileType: string, previousPayslip?: Payslip | null, historique: Payslip[] = []) => {
+  const extractPayslipData = async (_filePath: string, fileType: string, previousPayslip?: Payslip | null, historique: Payslip[] = [], pdfText?: string) => {
     try {
-      const { data } = await supabase.storage.from("payslips").download(filePath);
-      if (!data) { console.error("[paytrak] telechargement du PDF impossible"); return null; }
       if (!fileType.includes("pdf")) { console.error("[paytrak] type de fichier non PDF:", fileType); return null; }
-      const buffer = await data.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+      if (!pdfText) { console.error("[paytrak] texte du PDF absent"); return null; }
       const { data: fnData, error: fnError } = await supabase.functions.invoke("extract-payslip", {
         body: {
-          pdfBase64: base64,
+          pdfText,
           previousPayslip: previousPayslip ? {
             period_month: previousPayslip.period_month,
             period_year: previousPayslip.period_year,
@@ -78,6 +76,17 @@ function usePayslipsState() {
   const uploadPayslip = async (file: File) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Non authentifié");
+    let pdfText: string | undefined;
+    if (file.type === "application/pdf") {
+      try {
+        pdfText = await lirePdfSansNir(await file.arrayBuffer());
+      } catch (e) {
+        if (e instanceof Error && e.message === ERREUR_PDF_SANS_TEXTE) {
+          throw new Error("Ce PDF ne contient pas de texte lisible (scan ou photo). Dépose le PDF d’origine de ton bulletin, tel que ton employeur te le fournit : le numéro de sécurité sociale y est masqué avant l’analyse.");
+        }
+        throw new Error("Impossible de lire ce PDF pour l’analyser. Réessaie, ou dépose le PDF d’origine de ton bulletin.");
+      }
+    }
     const ext = file.name.split(".").pop();
     const path = `${user.id}/${Date.now()}.${ext}`;
     const { error: up } = await supabase.storage.from("payslips").upload(path, file);
@@ -100,7 +109,7 @@ function usePayslipsState() {
         now.getFullYear()
       );
       const historique = (allPayslips ?? []).filter((p) => p.id !== inserted.id && p.gross_salary);
-      const result = await extractPayslipData(path, file.type, previousPayslip, historique);
+      const result = await extractPayslipData(path, file.type, previousPayslip, historique, pdfText);
       const lisible = !!(result && result.data && result.data.period_month && result.data.period_year && result.data.gross_salary);
       if (!lisible) {
         // Analyse échouée ou bulletin illisible : on retire la ligne vide créée plus haut
