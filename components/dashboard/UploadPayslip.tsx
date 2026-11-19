@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { usePayslips } from "@/hooks/usePayslips";
+import ConsentementSensible from "@/components/dashboard/ConsentementSensible";
 
 export function UploadPayslip() {
   const [open, setOpen] = useState(false);
@@ -105,6 +106,8 @@ export function UploadPayslip() {
               {erreur && (
                 <p className="text-danger text-sm bg-danger/10 px-3 py-2 rounded-lg">{erreur}</p>
               )}
+
+<ConsentementSensible />
 
               {uploading && (
                 <div className="space-y-2">
