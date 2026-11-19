@@ -14,6 +14,7 @@ export interface Profile {
   sector: string | null;
   sensitive_consent?: boolean | null;
   sensitive_consent_at?: string | null;
+  deletion_requested_at?: string | null;
   cadre_status: string | null;
 }
 
