@@ -69,13 +69,14 @@ export default function Confidentialite() {
         <ul className={UL}>
           <li>Supabase : base de données, authentification et stockage des fichiers, hébergés dans l’Union européenne.</li>
           <li>Vercel : hébergement du site (États-Unis, avec clauses contractuelles types).</li>
-          <li>Anthropic : analyse du texte du bulletin (numéro de sécurité sociale masqué) pour en extraire les montants. Anthropic ne conserve pas par défaut le contenu envoyé via son API et ne l’utilise pas pour entraîner ses modèles sans autorisation.</li>
+          <li>Anthropic (États-Unis) : analyse du texte du bulletin, numéro de sécurité sociale masqué, pour en extraire les montants. Selon sa politique actuelle, Anthropic supprime ces contenus de ses systèmes sous 30 jours (jusqu’à 2 ans en cas de signalement automatique d’un usage interdit) et ne les utilise pas pour entraîner ses modèles. Un accord de traitement des données avec clauses contractuelles types encadre ce transfert.</li>
         </ul>
 
         <h2 className={H2}>Durée de conservation</h2>
         <p className={P}>
-          Tes données sont conservées tant que ton compte est actif. Si tu supprimes ton compte, elles sont
-          effacées dans un délai de 30 jours.
+          Tes données sont conservées tant que ton compte est actif. Si tu supprimes ton compte, il est fermé
+          immédiatement et tes données sont effacées définitivement après 30 jours ; pendant ce délai, tu peux
+          annuler la suppression en te reconnectant.
         </p>
 
         <h2 className={H2}>Tes droits</h2>
