@@ -201,6 +201,7 @@ export default async function Home() {
           <Logo className="h-7" />
           <div className="flex items-center gap-4">
             <Link href="/mentions-legales" className="hover:text-foreground">{"Mentions légales"}</Link>
+<Link href="/confidentialite" className="hover:text-foreground">{"Confidentialité"}</Link>
             <span>{"© 2026 paytrak"}</span>
           </div>
         </div>
