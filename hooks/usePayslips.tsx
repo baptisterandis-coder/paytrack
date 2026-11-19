@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { retirerLignesSensibles } from "@/lib/lignesSensibles";
 import { lirePdfSansNir, ERREUR_PDF_SANS_TEXTE } from "@/lib/pdfSansNir";
 import type { Payslip } from "@/utils/salary";
 
@@ -80,6 +81,8 @@ function usePayslipsState() {
     if (file.type === "application/pdf") {
       try {
         pdfText = await lirePdfSansNir(await file.arrayBuffer());
+const { data: prof } = await supabase.from("profiles").select("sensitive_consent").eq("id", user.id).maybeSingle();
+if (!prof?.sensitive_consent) pdfText = retirerLignesSensibles(pdfText);
       } catch (e) {
         if (e instanceof Error && e.message === ERREUR_PDF_SANS_TEXTE) {
           throw new Error("Ce PDF ne contient pas de texte lisible (scan ou photo). Dépose le PDF d’origine de ton bulletin, tel que ton employeur te le fournit : le numéro de sécurité sociale y est masqué avant l’analyse.");
