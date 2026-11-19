@@ -1,5 +1,6 @@
 "use client";
 import ConsentementSensible from "@/components/dashboard/ConsentementSensible";
+import SuppressionCompte from "@/components/dashboard/SuppressionCompte";
 
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -138,6 +139,7 @@ export function ProfileModal({ open, onClose }: ProfileModalProps) {
             </select>
           </div>
 <ConsentementSensible />
+<SuppressionCompte />
           <div className="flex gap-2 pt-2">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">Annuler</Button>
             <Button type="submit" disabled={loading} className="flex-1">
