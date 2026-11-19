@@ -12,6 +12,8 @@ export interface Profile {
   contract_type: string | null;
   region: string | null;
   sector: string | null;
+  sensitive_consent?: boolean | null;
+  sensitive_consent_at?: string | null;
   cadre_status: string | null;
 }
 
