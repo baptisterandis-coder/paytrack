@@ -1,4 +1,5 @@
 "use client";
+import ConsentementSensible from "@/components/dashboard/ConsentementSensible";
 
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -136,7 +137,7 @@ export function ProfileModal({ open, onClose }: ProfileModalProps) {
               {CONTRACT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
-
+<ConsentementSensible />
           <div className="flex gap-2 pt-2">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">Annuler</Button>
             <Button type="submit" disabled={loading} className="flex-1">
