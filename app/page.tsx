@@ -9,7 +9,7 @@ import { LienEspace } from "@/components/LienEspace";
 import { CarrouselComprends } from "@/components/CarrouselComprends";
 import { CarrouselSuis } from "@/components/CarrouselSuis";
 import { CarrouselProgresse } from "@/components/CarrouselProgresse";
-import { Faq } from "@/components/Faq";
+
 
 export const metadata: Metadata = {
   title: "paytrak — Comprends. Suis. Progresse.",
@@ -187,7 +187,7 @@ export default async function Home() {
           </div>
         </section>
 
-<Faq />
+
 
         <section className="max-w-3xl mx-auto px-5 py-12 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold">{"Ta carrière mérite mieux qu'un dossier de PDF"}</h2>
