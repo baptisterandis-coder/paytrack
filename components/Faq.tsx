@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 
 const QUESTIONS: { q: string; r: string }[] = [
@@ -35,11 +36,13 @@ const QUESTIONS: { q: string; r: string }[] = [
   },
 ];
 
-export function Faq() {
+// Accueil : les 4 premières questions + lien. Page /faq : toutes les questions (tout).
+export function Faq({ tout = false }: { tout?: boolean }) {
+  const liste = tout ? QUESTIONS : QUESTIONS.slice(0, 4);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: QUESTIONS.map((x) => ({
+    mainEntity: liste.map((x) => ({
       "@type": "Question",
       name: x.q,
       acceptedAnswer: { "@type": "Answer", text: x.r },
@@ -47,10 +50,10 @@ export function Faq() {
   };
 
   return (
-    <section id="faq" className="max-w-3xl mx-auto px-5 py-8 md:py-10">
-      <h2 className="text-3xl font-bold tracking-tight text-center">Questions fréquentes</h2>
-      <div className="mt-6 space-y-2">
-        {QUESTIONS.map((x) => (
+    <section id="faq" className={tout ? "" : "max-w-3xl mx-auto px-5 py-8 md:py-10"}>
+      {!tout && <h2 className="text-3xl font-bold tracking-tight text-center">Questions fréquentes</h2>}
+      <div className={(tout ? "" : "mt-6 ") + "space-y-2"}>
+        {liste.map((x) => (
           <details key={x.q} className="group rounded-xl border border-border/60 bg-muted/20 px-4 py-3">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-[15px] font-medium text-foreground">
               {x.q}
@@ -60,6 +63,11 @@ export function Faq() {
           </details>
         ))}
       </div>
+      {!tout && (
+        <p className="mt-5 text-center">
+          <Link href="/faq" className="text-sm text-primary hover:underline">Toutes les questions</Link>
+        </p>
+      )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </section>
   );
