@@ -43,19 +43,25 @@ export function SalaryChart({ data }: { data: MonthlyChartData[] }) {
           <h3 className="text-xl font-semibold text-foreground">Évolution Salariale {cy}</h3>
           <p className="text-sm text-muted-foreground">Comparaison avec {cy - 1}</p>
         </div>
-        {!hasData && <span className="text-xs text-muted-foreground bg-muted/30 px-3 py-1 rounded-full">Données d'exemple</span>}
       </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={displayData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(219 55% 28%)" />
-          <XAxis dataKey="month" stroke="hsl(219 30% 68%)" fontSize={12} tickLine={false} />
-          <YAxis stroke="hsl(219 30% 68%)" fontSize={12} tickFormatter={v => `${(v/1000).toFixed(0)}k`} tickLine={false} axisLine={false} />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend wrapperStyle={{ paddingTop: "16px" }} iconType="circle" iconSize={8} />
-          <Bar dataKey="brutN1" fill="hsl(219 45% 48%)" name={`Brut ${cy - 1}`} radius={[3, 3, 0, 0]} />
-          <Bar dataKey="brut" fill="hsl(18 87% 53%)" name={`Brut ${cy}`} radius={[3, 3, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+      {!hasData && (
+        <div className="mb-4 rounded-xl border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-foreground">
+          <span className="font-semibold">Exemple fictif.</span> Importe ton premier bulletin pour voir ta vraie évolution salariale.
+        </div>
+      )}
+      <div className={hasData ? "" : "opacity-40 grayscale-[30%] pointer-events-none select-none"} aria-hidden={!hasData}>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={displayData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(219 55% 28%)" />
+            <XAxis dataKey="month" stroke="hsl(219 30% 68%)" fontSize={12} tickLine={false} />
+            <YAxis stroke="hsl(219 30% 68%)" fontSize={12} tickFormatter={v => `${(v/1000).toFixed(0)}k`} tickLine={false} axisLine={false} />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend wrapperStyle={{ paddingTop: "16px" }} iconType="circle" iconSize={8} />
+            <Bar dataKey="brutN1" fill="hsl(219 45% 48%)" name={`Brut ${cy - 1}`} radius={[3, 3, 0, 0]} />
+            <Bar dataKey="brut" fill="hsl(18 87% 53%)" name={`Brut ${cy}`} radius={[3, 3, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
