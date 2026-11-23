@@ -3,8 +3,23 @@ import "./globals.css";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://paytrak.fr"),
   title: "paytrak — Suivi de bulletins de paie",
   description: "Analysez et suivez l'évolution de vos bulletins de paie avec paytrak.",
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: "https://paytrak.fr",
+    siteName: "paytrak",
+    title: "paytrak — Suivi de bulletins de paie",
+    description: "Analysez et suivez l'évolution de vos bulletins de paie avec paytrak.",
+  },
+  twitter: {
+    card: "summary",
+    title: "paytrak — Suivi de bulletins de paie",
+    description: "Analysez et suivez l'évolution de vos bulletins de paie avec paytrak.",
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
