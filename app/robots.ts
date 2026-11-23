@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/dashboard", "/api", "/auth"],
       },
     ],
-    sitemap: "https://paytrak.fr/sitemap.xml",
+    sitemap: "https://www.paytrak.fr/sitemap.xml",
   };
 }
