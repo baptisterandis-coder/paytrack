@@ -59,9 +59,6 @@ export default function Image() {
               </div>
             ))}
           </div>
-          <div style={{ display: "flex", fontSize: 22, color: "#7f93c4", marginTop: 16 }}>
-            Exemple fictif
-          </div>
         </div>
       </div>
     ),
