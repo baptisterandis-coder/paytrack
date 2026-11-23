@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://www.paytrak.fr",
     siteName: "paytrak",
     title: "paytrak — Suivi de bulletins de paie",
     description: "Analysez et suivez l'évolution de vos bulletins de paie avec paytrak.",
